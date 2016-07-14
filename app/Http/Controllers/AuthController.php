@@ -19,6 +19,9 @@ use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
+use Laravel\Socialite\Facades\Socialite;
+use CachetHQ\Cachet\Models\User;
+use Illuminate\Support\Facades\Log;
 use PragmaRX\Google2FA\Vendor\Laravel\Facade as Google2FA;
 
 class AuthController extends Controller
@@ -121,5 +124,54 @@ class AuthController extends Controller
         Auth::logout();
 
         return Redirect::to('/');
+    }
+
+    /**
+     * Redirect the user to the Google authentication page.
+     *
+     * @return Response
+     */
+    public function redirectToProvider()
+    {
+        return Socialite::driver('google')->redirect();
+    }
+
+    /**
+     * Obtain the user information from Google.
+     *
+     * @return Response
+     */
+    public function handleProviderCallback()
+    {
+        try {
+            $user = Socialite::driver('google')->user();
+        } catch (Exception $e) {
+            return Redirect::to('auth/google');
+        }
+
+        $authUser = $this->findOrCreateUser($user);
+        Auth::login($authUser, true);
+        return Redirect::to('dashboard');
+    }
+
+    /**
+     * Return user if exists; create and return if doesn't
+     *
+     * @param $user
+     * @return User
+     */
+    private function findOrCreateUser($user)
+    {
+        if ($authUser = User::where('email', $user->email)->first()) {
+            return $authUser;
+        } else {
+            return User::create([
+                'username' => $user->name,
+                'email' => $user->email,
+                'google_id' => $user->id,
+                'avatar' => $user->avatar,
+                'level' => User::LEVEL_ADMIN
+            ]);
+        }
     }
 }

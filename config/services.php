@@ -24,7 +24,16 @@ return [
     */
 
    'github' => [
+        'client_id' => env('GITHUB_ID'),
+        'client_secret' => env('GITHUB_SECRET'),
+        'redirect' => env('GITHUB_CALLBACK_URL'),
         'token' => env('GITHUB_TOKEN'),
+    ],
+
+    'google' => [
+        'client_id' => env('GOOGLE_ID'),
+        'client_secret' => env('GOOGLE_SECRET'),
+        'redirect' => env('GOOGLE_CALLBACK_URL'),
     ],
 
     'mailgun' => [

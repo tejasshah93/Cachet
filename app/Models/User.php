@@ -76,7 +76,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public $rules = [
         'username' => ['required', 'regex:/\A(?!.*[:;]-\))[ -~]+\z/'],
         'email'    => 'required|email',
-        'password' => 'required',
+        'google_id' => 'required',
     ];
 
     /**
@@ -116,7 +116,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      */
     public function getGravatarAttribute($size = 200)
     {
-        return sprintf('https://www.gravatar.com/avatar/%s?size=%d', md5($this->email), $size);
+        return sprintf($this->avatar);
     }
 
     /**

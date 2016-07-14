@@ -42,6 +42,8 @@
                     </div>
                 </div>
             </form>
+
+            <a href="{!!URL::to('auth/google')!!}">Login with Google</a>
         </div>
     </div>
 </div>

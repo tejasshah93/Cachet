@@ -56,6 +56,16 @@ class AuthRoutes
                 'uses'       => 'AuthController@logoutAction',
                 'middleware' => 'auth',
             ]);
+
+            $router->get('google', [
+                'as'         => 'google',
+                'uses'       => 'AuthController@redirectToProvider',
+            ]);
+
+            $router->get('google/callback', [
+                'as'         => 'google/callback',
+                'uses'       => 'AuthController@handleProviderCallback',
+            ]);
         });
     }
 }

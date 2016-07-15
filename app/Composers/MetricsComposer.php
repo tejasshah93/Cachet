@@ -14,6 +14,7 @@ namespace CachetHQ\Cachet\Composers;
 use CachetHQ\Cachet\Models\Metric;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Auth;
 
 class MetricsComposer
 {
@@ -28,7 +29,8 @@ class MetricsComposer
     {
         $metrics = null;
         if ($displayMetrics = Config::get('setting.display_graphs')) {
-            $metrics = Metric::displayable()->orderBy('order')->orderBy('id')->get();
+            $metricVisibility = Auth::check() ? 0 : 1;
+            $metrics = Metric::displayable()->where('visible', '>=', $metricVisibility)->orderBy('order')->orderBy('id')->get();
         }
 
         $view->withDisplayMetrics($displayMetrics)

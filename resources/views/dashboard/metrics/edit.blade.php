@@ -26,6 +26,13 @@
                             <input type="text" class="form-control" name="suffix" id="metric-suffix" required value="{{ $metric->suffix }}">
                         </div>
                         <div class="form-group">
+                            <label>{{ trans('forms.metrics.visibility') }}</label>
+                            <select name="visible" class="form-control" required>
+                                <option value='1' {{ $metric->visible === 1 ? "selected" : null }}>{{ trans('forms.metrics.public') }}</option>
+                                <option value='0' {{ $metric->visible === 0 ? "selected" : null }}>{{ trans('forms.metrics.logged_in_only') }}</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
                             <label>{{ trans('forms.metrics.description') }}</label>
                             <div class='markdown-control'>
                                 <textarea name="description" class="form-control" rows="5">{{ $metric->description }}</textarea>

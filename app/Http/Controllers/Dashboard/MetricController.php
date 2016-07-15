@@ -80,7 +80,8 @@ class MetricController extends Controller
                 $metricData['display_chart'],
                 $metricData['places'],
                 $metricData['default_view'],
-                $metricData['threshold']
+                $metricData['threshold'],
+                $metricData['visible']
             ));
         } catch (ValidationException $e) {
             return Redirect::route('dashboard.metrics.add')
@@ -153,7 +154,8 @@ class MetricController extends Controller
                 Binput::get('display_chart', null, false),
                 Binput::get('places', null, false),
                 Binput::get('default_view', null, false),
-                Binput::get('threshold', null, false)
+                Binput::get('threshold', null, false),
+                Binput::get('visible', null, false)
             ));
         } catch (ValidationException $e) {
             return Redirect::route('dashboard.metrics.edit', ['id' => $metric->id])

@@ -86,6 +86,13 @@ final class UpdateMetricCommand
     public $threshold;
 
     /**
+     * The metric visibility.
+     *
+     * @var int
+     */
+    public $visible;
+
+    /**
      * The order of which to place the metric in.
      *
      * @var int|null
@@ -108,7 +115,8 @@ final class UpdateMetricCommand
         'places'        => 'numeric|between:0,4',
         'default_view'  => 'numeric|between:0,4',
         'threshold'     => 'numeric|between:0,10',
-        'order'         => 'int',
+        'visible'       => 'int',
+        'order'         => 'int'
     ];
 
     /**
@@ -124,11 +132,12 @@ final class UpdateMetricCommand
      * @param int                            $places
      * @param int                            $default_view
      * @param int                            $threshold
+     * @param int                            $visible
      * @param int|null                       $order
      *
      * @return void
      */
-    public function __construct(Metric $metric, $name, $suffix, $description, $default_value, $calc_type, $display_chart, $places, $default_view, $threshold, $order = null)
+    public function __construct(Metric $metric, $name, $suffix, $description, $default_value, $calc_type, $display_chart, $places, $default_view, $threshold, $visible, $order = null)
     {
         $this->metric = $metric;
         $this->name = $name;
@@ -140,6 +149,7 @@ final class UpdateMetricCommand
         $this->places = $places;
         $this->default_view = $default_view;
         $this->threshold = $threshold;
+        $this->visible = $visible;
         $this->order = $order;
     }
 }

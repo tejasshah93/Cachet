@@ -81,6 +81,9 @@ return [
     'metrics' => [
         'name'             => 'Name',
         'suffix'           => 'Suffix',
+        'visibility'       => 'Metric Visibility',
+        'public'           => 'Viewable by public',
+        'logged_in_only'   => 'Only visible to logged in users',
         'description'      => 'Description',
         'description-help' => 'You may also use Markdown.',
         'display-chart'    => 'Display chart on status page?',

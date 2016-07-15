@@ -29,7 +29,11 @@ class MetricController extends AbstractApiController
      */
     public function getMetrics()
     {
-        $metrics = Metric::query();
+        $metricVisibility = app(Guard::class)->check() ? 0 : 1;
+
+        $metrics = Metric::where('visible', '>=', $metricVisibility);
+
+        $metrics->search(Binput::except(['sort', 'order', 'per_page']));
 
         if ($sortBy = Binput::get('sort')) {
             $direction = Binput::has('order') && Binput::get('order') == 'desc';
@@ -86,6 +90,7 @@ class MetricController extends AbstractApiController
                 Binput::get('places', 2),
                 Binput::get('default_view', Binput::get('view', 1)),
                 Binput::get('threshold', 5),
+                Binput::get('visible', 1),
                 Binput::get('order', 0)
             ));
         } catch (QueryException $e) {
@@ -116,6 +121,7 @@ class MetricController extends AbstractApiController
                 Binput::get('places'),
                 Binput::get('default_view', Binput::get('view')),
                 Binput::get('threshold'),
+                Binput::get('visible', 1),
                 Binput::get('order')
             ));
         } catch (QueryException $e) {

@@ -26,6 +26,13 @@
                             <input type="text" class="form-control" name="metric[suffix]" id="metric-suffix" required value="{{ Binput::old('metric.suffix') }}">
                         </div>
                         <div class="form-group">
+                            <label>{{ trans('forms.metrics.visibility') }}</label>
+                            <select name="metric[visible]" class="form-control" required>
+                                <option value='1' selected>{{ trans('forms.metrics.public') }}</option>
+                                <option value='0'>{{ trans('forms.metrics.logged_in_only') }}</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
                             <label>{{ trans('forms.metrics.description') }}</label>
                             <div class='markdown-control'>
                                 <textarea name="metric[description]" class="form-control" rows="5">{{ Binput::old('metric.description') }}</textarea>

@@ -21,7 +21,6 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
 use CachetHQ\Cachet\Models\User;
-use Illuminate\Support\Facades\Log;
 use PragmaRX\Google2FA\Vendor\Laravel\Facade as Google2FA;
 
 class AuthController extends Controller

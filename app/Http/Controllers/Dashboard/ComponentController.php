@@ -267,7 +267,7 @@ class ComponentController extends Controller
     }
 
     /**
-     * Creates a new component.
+     * Creates a new component group.
      *
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -277,7 +277,8 @@ class ComponentController extends Controller
             $group = dispatch(new AddComponentGroupCommand(
                 Binput::get('name'),
                 Binput::get('order', 0),
-                Binput::get('collapsed')
+                Binput::get('collapsed'),
+                Binput::get('visible', 1)
             ));
         } catch (ValidationException $e) {
             return Redirect::route('dashboard.components.groups.add')
@@ -304,7 +305,8 @@ class ComponentController extends Controller
                 $group,
                 Binput::get('name'),
                 $group->order,
-                Binput::get('collapsed')
+                Binput::get('collapsed'),
+                Binput::get('visible')
             ));
         } catch (ValidationException $e) {
             return Redirect::route('dashboard.components.groups.edit', ['id' => $group->id])

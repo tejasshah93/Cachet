@@ -29,6 +29,13 @@
                                 <option value="2">{{ trans('forms.components.groups.collapsed_incident') }}</option>
                             </select>
                         </div>
+                        <div class="form-group">
+                            <label>{{ trans('forms.components.groups.visibility') }}</label>
+                            <select name="visible" class="form-control" required>
+                                <option value="1">{{ trans('forms.components.groups.public') }}</option>
+                                <option value="0">{{ trans('forms.components.groups.logged_in_only') }}</option>
+                            </select>
+                        </div>
                     </fieldset>
 
                     <div class="btn-group">

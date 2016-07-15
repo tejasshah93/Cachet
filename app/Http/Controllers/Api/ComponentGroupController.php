@@ -36,7 +36,9 @@ class ComponentGroupController extends AbstractApiController
      */
     public function getGroups()
     {
-        $groups = ComponentGroup::query();
+        $componentGroupVisibility = app(Guard::class)->check() ? 0 : 1;
+
+        $groups = ComponentGroup::where('visible', '>=', $componentGroupVisibility);
 
         $groups->search(Binput::except(['sort', 'order', 'per_page']));
 
@@ -74,7 +76,8 @@ class ComponentGroupController extends AbstractApiController
             $group = dispatch(new AddComponentGroupCommand(
                 Binput::get('name'),
                 Binput::get('order', 0),
-                Binput::get('collapsed', 0)
+                Binput::get('collapsed', 0),
+                Binput::get('visible', 1)
             ));
         } catch (QueryException $e) {
             throw new BadRequestHttpException();
@@ -97,7 +100,8 @@ class ComponentGroupController extends AbstractApiController
                 $group,
                 Binput::get('name'),
                 Binput::get('order'),
-                Binput::get('collapsed')
+                Binput::get('collapsed'),
+                Binput::get('visible', 1)
             ));
         } catch (QueryException $e) {
             throw new BadRequestHttpException();

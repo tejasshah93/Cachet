@@ -70,10 +70,13 @@ return [
 
         'groups' => [
             'name'               => 'Name',
-            'collapsing'         => 'Choose visibility of the group',
+            'collapsing'         => 'Choose collapse/expansion state of the group',
             'visible'            => 'Always expanded',
             'collapsed'          => 'Collapse the group by default',
             'collapsed_incident' => 'Collapse the group, but expand if there are issues',
+            'visibility'         => 'Choose visibility of the group',
+            'public'             => 'Viewable by public',
+            'logged_in_only'     => 'Only visible to logged in users'
         ],
     ],
 

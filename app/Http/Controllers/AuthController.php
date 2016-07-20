@@ -22,6 +22,7 @@ use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
 use CachetHQ\Cachet\Models\User;
 use PragmaRX\Google2FA\Vendor\Laravel\Facade as Google2FA;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class AuthController extends Controller
 {
@@ -144,8 +145,15 @@ class AuthController extends Controller
     {
         try {
             $user = Socialite::driver('google')->user();
+            $domain_name = substr(strrchr($user->email, "@"), 1);
+            if ($domain_name !== 'browserstack.com') {
+                throw new \Exception('Invalid Domain User');
+            }
         } catch (Exception $e) {
             return Redirect::to('auth/google');
+        } catch (\Exception $e) {
+            return Redirect::route('auth.login')
+                ->withError(trans('forms.login.invalid-domain'));
         }
 
         $authUser = $this->findOrCreateUser($user);

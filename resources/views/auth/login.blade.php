@@ -19,7 +19,7 @@
                 </div>
                 @endif
 
-                <div class="form-group">
+                <!-- <div class="form-group">
                     <label class="sr-only">{{ trans('forms.login.login') }}</label>
                     <input autocomplete="off" class="form-control login-input" placeholder="{{ trans('forms.login.login') }}" required="required" name="username" type="text" value="{{ Binput::old('username') }}" autofocus>
                 </div>
@@ -40,10 +40,10 @@
                             <button type="submit" class="btn btn-success btn-lg btn-block btn-trans">{{ trans('dashboard.login.login') }}</button>
                         </div>
                     </div>
-                </div>
+                </div> -->
             </form>
 
-            <a href="{!!URL::to('auth/google')!!}">Login with Google</a>
+            <a class="btn btn-success btn-lg btn-block" href="{!!URL::to('auth/google')!!}">Login with Google</a>
         </div>
     </div>
 </div>

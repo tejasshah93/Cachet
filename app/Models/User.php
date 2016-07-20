@@ -50,6 +50,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         'api_key'           => 'string',
         'active'            => 'bool',
         'level'             => 'int',
+        'google_id'         => 'string'
     ];
 
     /**
@@ -76,7 +77,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public $rules = [
         'username' => ['required', 'regex:/\A(?!.*[:;]-\))[ -~]+\z/'],
         'email'    => 'required|email',
-        'google_id' => 'required',
     ];
 
     /**

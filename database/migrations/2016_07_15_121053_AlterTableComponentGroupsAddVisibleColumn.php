@@ -26,7 +26,7 @@ class AlterTableComponentGroupsAddVisibleColumn extends Migration
      */
     public function down()
     {
-        Schema::table('metrics', function (Blueprint $table) {
+        Schema::table('component_groups', function (Blueprint $table) {
             $table->dropColumn('visible');
         });
     }

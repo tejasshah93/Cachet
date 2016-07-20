@@ -35,6 +35,7 @@ return [
         'invalid-token' => 'Invalid token',
         'cookies'       => 'You must enable cookies to login.',
         'rate-limit'    => 'Rate limit exceeded.',
+        'invalid-domain' => 'Please sign-in using @browserstack.com email',
     ],
 
     // Incidents form fields

@@ -50,13 +50,6 @@
                     <span>{{ trans('dashboard.metrics.metrics') }}</span>
                 </a>
             </li>
-            <li {!! set_active('dashboard/subscribers*') !!}>
-                <a href="{{ route('dashboard.subscribers.index') }}">
-                    <i class="ion ion-ios-email-outline"></i>
-                    <span>{{ trans('dashboard.subscribers.subscribers') }}</span>
-                    <span class="label label-info">{{ $subscriber_count }}</span>
-                </a>
-            </li>
             <li {!! set_active('dashboard/team*') !!}>
                 <a href="{{ route('dashboard.team.index') }}">
                     <i class="ion ion-ios-people-outline"></i>

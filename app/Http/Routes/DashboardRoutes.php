@@ -131,19 +131,6 @@ class DashboardRoutes
                     $router->delete('{incident_template}/delete', 'IncidentController@deleteTemplateAction');
                 });
 
-                $router->group(['as'     => 'subscribers.', 'prefix' => 'subscribers'], function (Registrar $router) {
-                    $router->get('/', [
-                        'as'   => 'index',
-                        'uses' => 'SubscriberController@showSubscribers',
-                    ]);
-                    $router->get('add', [
-                        'as'   => 'add',
-                        'uses' => 'SubscriberController@showAddSubscriber',
-                    ]);
-                    $router->post('add', 'SubscriberController@createSubscriberAction');
-                    $router->delete('{subscriber}/delete', 'SubscriberController@deleteSubscriberAction');
-                });
-
                 $router->group(['as'  => 'metrics.', 'prefix' => 'metrics', 'middleware' => 'user_level'], function (Registrar $router) {
                     $router->get('/', [
                         'as'   => 'index',
@@ -190,10 +177,6 @@ class DashboardRoutes
                         'as'   => 'setup',
                         'uses' => 'SettingsController@showSetupView',
                     ]);
-                    $router->get('analytics', [
-                        'as'   => 'analytics',
-                        'uses' => 'SettingsController@showAnalyticsView',
-                    ]);
                     $router->get('localization', [
                         'as'   => 'localization',
                         'uses' => 'SettingsController@showLocalizationView',
@@ -213,10 +196,6 @@ class DashboardRoutes
                     $router->get('customization', [
                         'as'   => 'customization',
                         'uses' => 'SettingsController@showCustomizationView',
-                    ]);
-                    $router->get('credits', [
-                        'as'   => 'credits',
-                        'uses' => 'SettingsController@showCreditsView',
                     ]);
                     $router->post('/', 'SettingsController@postSettings');
                 });

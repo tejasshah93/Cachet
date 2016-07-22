@@ -56,46 +56,6 @@
                         <span class="text-danger">{{ $errors->first('env.session_driver') }}</span>
                         @endif
                     </div>
-                    <div class="form-group">
-                        <label>{{ trans('forms.setup.mail_driver') }}</label>
-                        <select name="env[mail_driver]" class="form-control" required>
-                            <option disabled>{{ trans('forms.setup.mail_driver') }}</option>
-                            @foreach($mail_drivers as $driver => $driverName)
-                            <option value="{{ $driver }}" {{ Binput::old('env.mail_driver') == $driver ? "selected" : null }}>{{ $driverName }}</option>
-                            @endforeach
-                        </select>
-                        @if($errors->has('env.mail_driver'))
-                        <span class="text-danger">{{ $errors->first('env.mail_driver') }}</span>
-                        @endif
-                    </div>
-                    <div class="form-group">
-                        <label>{{ trans('forms.setup.mail_host') }} (optional)</label>
-                        <input type="text" class="form-control" name="env[mail_host]" value="{{ Binput::old('env.mail_host') }}">
-                        @if($errors->has('env.mail_host'))
-                        <span class="text-danger">{{ $errors->first('env.mail_host') }}</span>
-                        @endif
-                    </div>
-                    <div class="form-group">
-                        <label>{{ trans('forms.setup.mail_address') }}</label>
-                        <input type="text" class="form-control" name="env[mail_address]" value="{{ Binput::old('env.mail_address') }}" placeholder="notifications@alt-three.com">
-                        @if($errors->has('env.mail_address'))
-                        <span class="text-danger">{{ $errors->first('env.mail_address') }}</span>
-                        @endif
-                    </div>
-                    <div class="form-group">
-                        <label>{{ trans('forms.setup.mail_username') }}</label>
-                        <input type="text" class="form-control" name="env[mail_username]" value="{{ Binput::old('env.mail_username') }}">
-                        @if($errors->has('env.mail_username'))
-                        <span class="text-danger">{{ $errors->first('env.mail_username') }}</span>
-                        @endif
-                    </div>
-                    <div class="form-group">
-                        <label>{{ trans('forms.setup.mail_password') }}</label>
-                        <input type="text" class="form-control" name="env[mail_password]" value="{{ Binput::old('env.mail_password') }}" autocomplete="off">
-                        @if($errors->has('env.mail_password'))
-                        <span class="text-danger">{{ $errors->first('env.mail_password') }}</span>
-                        @endif
-                    </div>
                 </fieldset>
                 <hr>
                 <div class="form-group text-center">
@@ -172,25 +132,10 @@
             <div class="step block-3 hidden">
                 <fieldset>
                     <div class="form-group">
-                        <label>{{ trans("forms.setup.username") }}</label>
-                        <input type="text" name="user[username]" class="form-control" placeholder="{{ trans('forms.setup.username') }}" value="{{ Binput::old('user.username', '') }}" required>
-                        @if($errors->has('user.username'))
-                        <span class="text-danger">{{ $errors->first('user.username') }}</span>
-                        @endif
-                    </div>
-                    <div class="form-group">
                         <label>{{ trans("forms.setup.email") }}</label>
                         <input type="text" name="user[email]" class="form-control" placeholder="{{ trans('forms.setup.email') }}" value="{{ Binput::old('user.email', '') }}" required>
                         @if($errors->has('user.email'))
                         <span class="text-danger">{{ $errors->first('user.email') }}</span>
-                        @endif
-                    </div>
-                    <div class="form-group">
-                        <label>{{ trans("forms.setup.password") }}</label>
-                        <input type="password" name="user[password]" class="form-control password-strength" placeholder="{{ trans('forms.setup.password') }}" value="{{ Binput::old('user.password', '') }}" required>
-                        <div class="strengthify-wrapper"></div>
-                        @if($errors->has('user.password'))
-                        <span class="text-danger">{{ $errors->first('user.password') }}</span>
                         @endif
                     </div>
                 </fieldset>

@@ -77,18 +77,6 @@ class SettingsController extends Controller
                 'icon'   => 'ion-lock-combination',
                 'active' => false,
             ],
-            'analytics' => [
-                'title'  => trans('dashboard.settings.analytics.analytics'),
-                'url'    => route('dashboard.settings.analytics'),
-                'icon'   => 'ion-stats-bars',
-                'active' => false,
-            ],
-            'credits' => [
-                'title'  => trans('dashboard.settings.credits.credits'),
-                'url'    => route('dashboard.settings.credits'),
-                'icon'   => 'ion-ios-list',
-                'active' => false,
-            ],
             'about' => [
                 'title'  => CACHET_VERSION,
                 'url'    => 'javascript: void(0);',

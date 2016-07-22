@@ -55,17 +55,6 @@
                                 <div class="col-xs-12">
                                     <div class="checkbox">
                                         <label>
-                                            <input type="hidden" value="0" name="enable_subscribers">
-                                            <input type="checkbox" value="1" name="enable_subscribers" {{ Config::get('setting.enable_subscribers') ? 'checked' : null }}>
-                                            {{ trans('forms.settings.app-setup.subscribers') }}
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-xs-12">
-                                    <div class="checkbox">
-                                        <label>
                                             <input type="hidden" value="0" name="display_graphs">
                                             <input type="checkbox" value="1" name="display_graphs" {{ $app_graphs ? 'checked' : null }}>
                                             {{ trans('forms.settings.app-setup.display-graphs') }}

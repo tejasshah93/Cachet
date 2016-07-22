@@ -51,11 +51,6 @@
                             <label>{{ trans('forms.components.link') }}</label>
                             <input type="text" name="component[link]" class="form-control">
                         </div>
-                        <div class="form-group">
-                            <label>{{ trans('forms.components.tags') }}</label>
-                            <input name="component[tags]" class="form-control">
-                            <span class="help-block">{{ trans('forms.components.tags-help') }}</span>
-                        </div>
                         <div class="checkbox">
                             <label>
                                 <input type="hidden" value="0" name="component[enabled]">

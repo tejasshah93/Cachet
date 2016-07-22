@@ -32,11 +32,18 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     const LEVEL_ADMIN = 1;
 
     /**
+     * The super level of user.
+     *
+     * @var int
+     */
+    const LEVEL_SUPER_USER = 2;
+
+    /**
      * The general level of user.
      *
      * @var int
      */
-    const LEVEL_USER = 2;
+    const LEVEL_USER = 3;
 
     /**
      * The attributes that should be casted to native types.
@@ -75,8 +82,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      * @var string[]
      */
     public $rules = [
-        'username' => ['required', 'regex:/\A(?!.*[:;]-\))[ -~]+\z/'],
+        // 'username' => ['required', 'regex:/\A(?!.*[:;]-\))[ -~]+\z/'],
         'email'    => 'required|email',
+        'level'    => 'required|int',
     ];
 
     /**
@@ -114,9 +122,13 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      *
      * @return string
      */
-    public function getGravatarAttribute($size = 200)
+    public function getGravatarAttribute($size = 50)
     {
-        return sprintf($this->avatar);
+        if ($this->avatar) {
+            return sprintf($this->avatar);
+        } else {
+            return sprintf("https://www.gravatar.com/avatar?size=50");
+        }
     }
 
     /**
@@ -158,6 +170,26 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function getIsAdminAttribute()
     {
         return $this->level == self::LEVEL_ADMIN;
+    }
+
+    /**
+     * Returns whether a user is at super user level.
+     *
+     * @return bool
+     */
+    public function getIsSuperUserAttribute()
+    {
+        return $this->level == self::LEVEL_SUPER_USER;
+    }
+
+    /**
+     * Returns whether a user is at admin level.
+     *
+     * @return bool
+     */
+    public function getIsUserAttribute()
+    {
+        return $this->level == self::LEVEL_USER;
     }
 
     /**

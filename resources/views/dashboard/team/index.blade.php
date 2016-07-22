@@ -10,9 +10,6 @@
         </span>
         @if($current_user->isAdmin)
         <div class="button-group pull-right">
-            <a class="btn btn-sm btn-success" href="{{ route('dashboard.team.invite') }}">
-                {{ trans('dashboard.team.invite.title') }}
-            </a>
             <a class="btn btn-sm btn-success" href="{{ route('dashboard.team.add') }}">
                 {{ trans('dashboard.team.add.title') }}
             </a>

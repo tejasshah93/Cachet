@@ -38,7 +38,7 @@ class DashboardRoutes
                     'uses' => 'DashboardController@showDashboard',
                 ]);
 
-                $router->group(['as' => 'components.', 'prefix' => 'components'], function (Registrar $router) {
+                $router->group(['as' => 'components.', 'prefix' => 'components', 'middleware' => 'user_level'], function (Registrar $router) {
                     $router->get('/', [
                         'as'   => 'index',
                         'uses' => 'ComponentController@showComponents',
@@ -144,7 +144,7 @@ class DashboardRoutes
                     $router->delete('{subscriber}/delete', 'SubscriberController@deleteSubscriberAction');
                 });
 
-                $router->group(['as'  => 'metrics.', 'prefix' => 'metrics'], function (Registrar $router) {
+                $router->group(['as'  => 'metrics.', 'prefix' => 'metrics', 'middleware' => 'user_level'], function (Registrar $router) {
                     $router->get('/', [
                         'as'   => 'index',
                         'uses' => 'MetricController@showMetrics',
@@ -162,7 +162,7 @@ class DashboardRoutes
                     $router->post('{metric}/edit', 'MetricController@editMetricAction');
                 });
 
-                $router->group(['as' => 'team.', 'prefix' => 'team'], function (Registrar $router) {
+                $router->group(['as' => 'team.', 'prefix' => 'team', 'middleware' => 'user_level'], function (Registrar $router) {
                     $router->get('/', [
                         'as'   => 'index',
                         'uses' => 'TeamController@showTeamView',
@@ -185,7 +185,7 @@ class DashboardRoutes
                     });
                 });
 
-                $router->group(['as' => 'settings.', 'prefix' => 'settings'], function (Registrar $router) {
+                $router->group(['as' => 'settings.', 'prefix' => 'settings', 'middleware' => 'user_level'], function (Registrar $router) {
                     $router->get('setup', [
                         'as'   => 'setup',
                         'uses' => 'SettingsController@showSetupView',

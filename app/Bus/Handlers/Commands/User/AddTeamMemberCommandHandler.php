@@ -27,8 +27,6 @@ class AddTeamMemberCommandHandler
     public function handle(AddTeamMemberCommand $command)
     {
         $user = User::create([
-            'username' => $command->username,
-            'password' => $command->password,
             'email'    => $command->email,
             'level'    => $command->level,
         ]);

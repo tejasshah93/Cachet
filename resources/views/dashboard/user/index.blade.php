@@ -19,7 +19,7 @@
                         <div class="row">
                             <div class="col-sm-12">
                                 <div class="form-group">
-                                    <a href="https://gravatar.com"><img src="{{ $current_user->gravatar }}" class="img-responsive img-thumbnail" title="{{ trans('forms.user.gravatar') }}" data-toggle="tooltip"></a>
+                                    <img src="{{ $current_user->gravatar }}" class="img-responsive img-thumbnail" title="{{ trans('forms.user.gravatar') }}">
                                 </div>
                                 <div class="form-group">
                                     <label>{{ trans('forms.user.username') }}</label>
@@ -29,12 +29,8 @@
                                     <label>{{ trans('forms.user.email') }}</label>
                                     <input type="email" class="form-control" name="email" value="{{ $current_user->email }}" required>
                                 </div>
-                                <div class="form-group">
-                                    <label>{{ trans('forms.user.password') }}</label>
-                                    <input type="password" class="form-control password-strength" name="password" value="">
-                                    <div class="strengthify-wrapper"></div>
-                                </div>
                                 <hr>
+                                @if(!$current_user->isUser)
                                 <div class="form-group">
                                     <label>{{ trans('forms.user.api-token') }}</label>
                                     <div class="input-group">
@@ -44,6 +40,7 @@
                                     <span class="help-block">{{ trans('forms.user.api-token-help') }}</span>
                                 </div>
                                 <hr>
+                                @endif
                                 <div class="form-group">
                                     <label class="checkbox-inline">
                                         <input type="hidden" name="google2fa" value="0">

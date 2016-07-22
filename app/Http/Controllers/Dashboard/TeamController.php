@@ -82,14 +82,12 @@ class TeamController extends Controller
     {
         try {
             dispatch(new AddTeamMemberCommand(
-                Binput::get('username'),
-                Binput::get('password'),
                 Binput::get('email'),
                 Binput::get('level')
             ));
         } catch (ValidationException $e) {
             return Redirect::route('dashboard.team.add')
-                ->withInput(Binput::except('password'))
+                ->withInput(Binput::all())
                 ->withTitle(sprintf('%s %s', trans('dashboard.notifications.whoops'), trans('dashboard.team.add.failure')))
                 ->withErrors($e->getMessageBag());
         }
@@ -107,7 +105,7 @@ class TeamController extends Controller
      */
     public function postUpdateUser(User $user)
     {
-        $userData = array_filter(Binput::only(['username', 'email', 'password', 'level']));
+        $userData = array_filter(Binput::only(['email', 'level']));
 
         try {
             $user->update($userData);
@@ -135,7 +133,7 @@ class TeamController extends Controller
             ));
         } catch (ValidationException $e) {
             return Redirect::route('dashboard.team.invite')
-                ->withInput(Binput::except('password'))
+                ->withInput(Binput::all())
                 ->withTitle(sprintf('%s %s', trans('dashboard.notifications.whoops'), trans('dashboard.team.invite.failure')))
                 ->withErrors($e->getMessageBag());
         }

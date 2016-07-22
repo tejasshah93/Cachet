@@ -36,6 +36,7 @@
                     <span class="label label-info">{{ $incident_template_count }}</span>
                 </a>
             </li>
+            @if(!$current_user->isUser)
             <li {!! set_active('dashboard/components*') !!}>
                 <a href="{{ route('dashboard.components.index') }}">
                     <i class="ion ion-ios-browsers-outline"></i>
@@ -70,6 +71,7 @@
                     </span>
                 </a>
             </li>
+            @endif
         </ul>
         <div class="bottom-menu-sidebar">
             <ul>

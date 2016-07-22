@@ -60,5 +60,6 @@ class Kernel extends HttpKernel
         'setup'       => 'CachetHQ\Cachet\Http\Middleware\SetupAlreadyCompleted',
         'subscribers' => 'CachetHQ\Cachet\Http\Middleware\SubscribersConfigured',
         'throttle'    => 'AltThree\Throttle\ThrottlingMiddleware',
+        'user_level'  => 'CachetHQ\Cachet\Http\Middleware\UserLevelMiddleware',
     ];
 }

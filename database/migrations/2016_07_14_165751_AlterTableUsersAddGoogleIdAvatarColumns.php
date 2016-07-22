@@ -15,8 +15,6 @@ class AlterTableUsersAddGoogleIdAvatarColumns extends Migration
         Schema::table('users', function (Blueprint $table) {
             $table->string('google_id')->after('id');
             $table->string('avatar');
-
-            $table->unique('google_id');
         });
     }
 

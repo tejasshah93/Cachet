@@ -74,7 +74,7 @@ class SignupController extends Controller
                 Binput::get('username'),
                 Binput::get('password'),
                 Binput::get('email'),
-                User::LEVEL_USER
+                User::LEVEL_SUPER_USER
             ));
         } catch (ValidationException $e) {
             return Redirect::route('signup.invite', ['code' => $invite->code])

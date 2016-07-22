@@ -17,23 +17,18 @@
                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
                     <fieldset>
                         <div class="form-group">
-                            <label>{{ trans('forms.user.username') }}</label>
-                            <input type="text" class="form-control" name="username" value="{{ $user->username }}" required>
+                            <img src="{{ $user->gravatar }}" class="img-responsive img-thumbnail" title="{{ trans('forms.user.gravatar') }}">
                         </div>
                         <div class="form-group">
                             <label>{{ trans('forms.user.email') }}</label>
                             <input type="email" class="form-control" name="email" value="{{ $user->email }}" required>
                         </div>
-                        <div class="form-group">
-                            <label>{{ trans('forms.user.password') }}</label>
-                            <input type="password" class="form-control password-strength" name="password" value="" {{ !$current_user->isAdmin ? "disabled": "" }}>
-                            <div class="strengthify-wrapper"></div>
-                        </div>
                         @if($current_user->isAdmin)
                         <div class="form-group">
                             <label>{{ trans('forms.user.user_level') }}</label>
                             <select name="level" class="form-control">
-                                <option value="2" {{ $user->level === 2 ? "selected" : null }}>{{ trans('forms.user.levels.user') }}</option>
+                                <option value="3" {{ $user->level === 3 ? "selected" : null }}>{{ trans('forms.user.levels.user') }}</option>
+                                <option value="2" {{ $user->level === 2 ? "selected" : null }}>{{ trans('forms.user.levels.super_user') }}</option>
                                 <option value="1" {{ $user->level === 1 ? "selected" : null }}>{{ trans('forms.user.levels.admin') }}</option>
                             </select>
                         </div>

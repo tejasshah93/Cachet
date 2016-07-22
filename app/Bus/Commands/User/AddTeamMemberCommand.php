@@ -14,20 +14,6 @@ namespace CachetHQ\Cachet\Bus\Commands\User;
 final class AddTeamMemberCommand
 {
     /**
-     * The user username.
-     *
-     * @var string
-     */
-    public $username;
-
-    /**
-     * The user password.
-     *
-     * @var string
-     */
-    public $password;
-
-    /**
      * The user email.
      *
      * @var string
@@ -47,25 +33,20 @@ final class AddTeamMemberCommand
      * @var string[]
      */
     public $rules = [
-        'name'     => 'required|string',
-        'password' => 'string',
+        'email'    => 'required|email',
         'level'    => 'int',
     ];
 
     /**
      * Create a new add team member command instance.
      *
-     * @param string $username
-     * @param string $password
      * @param string $email
      * @param int    $level
      *
      * @return void
      */
-    public function __construct($username, $password, $email, $level)
+    public function __construct($email, $level)
     {
-        $this->username = $username;
-        $this->password = $password;
         $this->email = $email;
         $this->level = $level;
     }

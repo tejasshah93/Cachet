@@ -35,7 +35,6 @@ class CreateUsersTable extends Migration
 
             $table->index('remember_token');
             $table->index('active');
-            $table->unique('username');
             $table->unique('api_key');
             $table->unique('email');
         });

@@ -23,6 +23,7 @@ use Laravel\Socialite\Facades\Socialite;
 use CachetHQ\Cachet\Models\User;
 use PragmaRX\Google2FA\Vendor\Laravel\Facade as Google2FA;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Log;
 
 class AuthController extends Controller
 {
@@ -146,39 +147,54 @@ class AuthController extends Controller
         try {
             $user = Socialite::driver('google')->user();
             $domain_name = substr(strrchr($user->email, "@"), 1);
+
             if ($domain_name !== 'browserstack.com') {
-                throw new \Exception('Invalid Domain User');
+                throw new \Exception('invalid-domain');
+            }
+
+            $user_exists = User::where('email', $user->email)->first();
+
+            if ($user_exists == false) {
+                throw new \Exception('access-denied');
             }
         } catch (Exception $e) {
             return Redirect::to('auth/google');
         } catch (\Exception $e) {
             return Redirect::route('auth.login')
-                ->withError(trans('forms.login.invalid-domain'));
+                ->withError(trans('forms.login.' . $e->getMessage()));
         }
 
         $authUser = $this->findOrCreateUser($user);
+        if (!$authUser) {
+            return Redirect::route('auth.login')
+                ->withError(trans('forms.login.invalid-user'));
+        }
+
         Auth::login($authUser, true);
         return Redirect::to('dashboard');
     }
 
     /**
-     * Return user if exists; create and return if doesn't
+     * Return user if exists; else return NULL if doesn't
+     * (Function name kept as is for maintaining controller structure)
      *
      * @param $user
      * @return User
      */
     private function findOrCreateUser($user)
     {
-        if ($authUser = User::where('email', $user->email)->first()) {
+        $authUser = User::where('email', $user->email)->first();
+        if ($authUser) {
+            if (!$authUser->google_id) {
+                User::where('email', $user->email)->update([
+                    'username'  => $user->name,
+                    'google_id' => $user->id,
+                    'avatar'    => $user->avatar,
+                    ]);
+            }
             return $authUser;
         } else {
-            return User::create([
-                'username' => $user->name,
-                'email' => $user->email,
-                'google_id' => $user->id,
-                'avatar' => $user->avatar,
-                'level' => User::LEVEL_ADMIN
-            ]);
+            return NULL;
         }
     }
 }

@@ -33,7 +33,7 @@
                             <label>{{ trans('forms.components.groups.visibility') }}</label>
                             <select name="visible" class="form-control" required>
                                 <option value="1" {{ $group->visible === 1 ? "selected" : null }}>{{ trans('forms.components.groups.public') }}</option>
-                                <option value="0" {{ $group->collapsed === 0 ? "selected" : null }}>{{ trans('forms.components.groups.logged_in_only') }}</option>
+                                <option value="0" {{ $group->visible === 0 ? "selected" : null }}>{{ trans('forms.components.groups.logged_in_only') }}</option>
                             </select>
                         </div>
                     </fieldset>

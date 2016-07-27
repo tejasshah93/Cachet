@@ -1,0 +1,86 @@
+
+; Default configuration
+[default]
+UPDATE_COMPONENT_STATUS = true
+TRIGGER_INCIDENTS       = true
+
+
+; Graphite configuration
+[graphite]
+USERNAME    = "username"
+PASSWORD    = "password"
+TIME_RANGE  = "-2minutes"
+BASE_URL    = "http://graphite.browserstack.com/render"
+
+
+; Cachet Configuration
+[cachet]
+TOKEN     = "cachet_token"
+BASE_URL  = "https://<site_url>/api/v1/"
+
+
+; Endpoint URLs
+[endpoints]
+METRICS       = "/metrics"
+COMPONENTS    = "/components"
+INCIDENTS     = "/incidents"
+METRIC_POINTS = "/points"
+
+
+; List of metrics mapped with their corresponding IDs
+[metrics]
+METRIC_1	= "/1"
+METRIC_2	= "/1"
+
+; List of metrics mapped with their corresponding targets (without alias) respectively
+[targets]
+METRIC_1	= "sumSeries(stats_counts.something.here.use.*)"
+METRIC_2	= "averageSeries(stats_counts.something.here.use.*)"
+
+; URL suffix for Components
+[components]
+COMPONENT_1 	= "/1"
+COMPONENT_2 	= "/2"
+
+
+; Thresholds for updating component status / triggering incidents
+; Supported arrays: Operational, Degradation, PartialOutage, MajorOutage
+; key: metric, value: threshold
+; For comparing two conditions, use '&&'
+[thresholds]
+Operational[METRIC_1]  	= " < 20 "
+Degradation[METRIC_1]  	= " >= 20 && < 30 "
+PartialOutage[METRIC_1] = " >= 30 && < 40 "
+MajorOutage[METRIC_1]  	= " > 40"
+
+
+; Threshold status map
+[threshold_status]
+Operational   = 1
+Degradation   = 2
+PartialOutage = 3
+MajorOutage   = 4
+
+
+; Metric-Component mapping for modifying component status based on metric value
+; Multiple values supported (separated by comma)
+[metric_components]
+METRIC_1 = COMPONENT_1
+METRIC_2 = COMPONENT_1, COMPONENT_2
+
+
+; Incident visibility for each metric
+; 1 => Public
+; 0 => Only visible to logged in users
+[metric_incident_visibility]
+METRIC_1 = 1
+METRIC_2 = 0
+
+
+; Incident Details
+[incident_details]
+NAME                	= "Incident affects: "
+MESSAGE_IDENTIFIED  	= "We're currently facing issues with some of our components."
+MESSAGE_FIXED       	= "*Update*: This issue has been fixed."
+STATUS_IDENTIFIED   	= 2
+STATUS_FIXED        	= 4

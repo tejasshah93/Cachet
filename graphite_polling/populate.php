@@ -1,7 +1,7 @@
 <?php
 
 ini_set('memory_limit', -1);
-const CONFIG_FILE = 'config.ini';
+const CONFIG_FILE = '../config.ini';
 require_once('redis_helper.php');
 
 // Prepend a base path if Predis is not available in your "include_path".

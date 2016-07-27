@@ -1,0 +1,72 @@
+---
+- name: Deploy Status Page
+  hosts: status_browserstack
+  vars:
+    status_bstack_user: app
+    application_folder: statusBrowserstack
+    application_path: "/var/www/{{ application_folder }}"
+    repo_url: git@github.com:browserstack/statusBrowserstack.git
+    branch: master    
+
+  tasks:
+  - name: git clone statusBrowserstack repository
+    git:
+      repo: "{{ repo_url }}"
+      dest: "{{ application_path }}"
+      accept_hostkey: yes
+      key_file: "/home/{{ status_bstack_user }}/.ssh/id_rsa"
+      version: "{{ branch }}"
+      update: yes
+      force: yes
+
+  - name: composer update
+    shell: composer update
+    args:
+      chdir: "{{ application_path }}"
+
+  - name: install composer dependencies
+    shell: composer install --no-dev -o
+    args:
+      chdir: "{{ application_path }}"
+
+  - name: update folder permissions
+    file: path="{{ application_path }}" state=directory owner=nginx group=nginx recurse=yes
+
+  - name: update storage folder mode
+    file: path="{{ application_path }}/storage" state=directory mode=guo+w recurse=yes
+
+  - name: update populate.sh file mode
+    file: path="{{ application_path }}/graphite_polling/populate.sh" state=file mode=guo+x
+
+  - name: copy .env
+    copy: src=.env dest="{{ application_path }}" owner=nginx group=nginx mode=0777
+
+  - name: copy config.ini
+    copy: src=config.ini dest="{{ application_path }}" owner=nginx group=nginx mode=0777
+
+  - name: touch database.sqlite
+    file: path="{{ application_path }}/database/database.sqlite" state=touch
+
+  - name: update storage, database, bootstrap/cache, bootstrap/cachet folder permissions
+    file: path="{{ application_path }}/{{ item }}" mode=0777 recurse=yes
+    with_items:
+      - storage
+      - database
+      - bootstrap/cache
+      - bootstrap/cachet
+
+  - name: migrate database
+    shell: "php artisan migrate --force"
+    args:
+      chdir: "{{ application_path }}"
+
+  - name: artisan app update
+    shell: "php artisan app:update"
+    args:
+      chdir: "{{ application_path }}"
+
+  - name: nginx reload
+    service: name=nginx state=reloaded
+
+  - name: restart php-fpm
+    service: name=php-fpm state=restarted

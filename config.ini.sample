@@ -30,7 +30,7 @@ METRIC_POINTS = "/points"
 ; List of metrics mapped with their corresponding IDs
 [metrics]
 METRIC_1	= "/1"
-METRIC_2	= "/1"
+METRIC_2	= "/2"
 
 ; List of metrics mapped with their corresponding targets (without alias) respectively
 [targets]

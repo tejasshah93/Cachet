@@ -29,7 +29,7 @@ return [
         'GrahamCampbell\Exceptions\Transformers\AuthTransformer',
         'GrahamCampbell\Exceptions\Transformers\CsrfTransformer',
         'GrahamCampbell\Exceptions\Transformers\ModelTransformer',
-        'CachetHQ\Cachet\Foundation\Exceptions\Transformers\BusTransformer',
+        'CachetHQ\Cachet\Exceptions\Transformers\BusTransformer',
     ],
 
     /*
@@ -47,9 +47,11 @@ return [
     */
 
     'displayers' => [
-        'CachetHQ\Cachet\Foundation\Exceptions\Displayers\JsonValidationDisplayer',
-        'CachetHQ\Cachet\Foundation\Exceptions\Displayers\RedirectDisplayer',
-        'CachetHQ\Cachet\Foundation\Exceptions\Displayers\ThrottleDisplayer',
+        'CachetHQ\Cachet\Exceptions\Displayers\MaintenanceDisplayer',
+        'CachetHQ\Cachet\Exceptions\Displayers\SettingsDisplayer',
+        'CachetHQ\Cachet\Exceptions\Displayers\RedirectDisplayer',
+        'CachetHQ\Cachet\Exceptions\Displayers\ThrottleDisplayer',
+        'CachetHQ\Cachet\Exceptions\Displayers\JsonValidationDisplayer',
         'GrahamCampbell\Exceptions\Displayers\DebugDisplayer',
         'GrahamCampbell\Exceptions\Displayers\HtmlDisplayer',
         'GrahamCampbell\Exceptions\Displayers\JsonDisplayer',
@@ -73,7 +75,7 @@ return [
         'GrahamCampbell\Exceptions\Filters\VerboseFilter',
         'GrahamCampbell\Exceptions\Filters\CanDisplayFilter',
         'GrahamCampbell\Exceptions\Filters\ContentTypeFilter',
-        'CachetHQ\Cachet\Foundation\Exceptions\Filters\ApiFilter',
+        'CachetHQ\Cachet\Exceptions\Filters\ApiFilter',
     ],
 
     /*
@@ -106,7 +108,7 @@ return [
         'Illuminate\Auth\Access\AuthorizationException'                 => 'warning',
         'Illuminate\Database\Eloquent\ModelNotFoundException'           => 'warning',
         'Illuminate\Session\TokenMismatchException'                     => 'notice',
-        'Symfony\Component\HttpKernel\Exception\HttpExceptionInterface' => 'warning',
+        'Symfony\Component\HttpKernel\Exception\HttpExceptionInterface' => 'notice',
         'Symfony\Component\Debug\Exception\FatalErrorException'         => 'critical',
         'Exception'                                                     => 'error',
     ],

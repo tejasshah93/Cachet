@@ -12,28 +12,31 @@
 return [
     // Components
     'components' => [
-        'last_updated' => 'Last updated :timestamp',
+        'last_updated' => 'Senast uppdaterad :timestamp',
         'status'       => [
+            0 => 'Unknown',
             1 => 'Fungerar',
             2 => 'Prestandaproblem',
             3 => 'Mindre avbrott',
             4 => 'Större avbrott',
         ],
         'group' => [
-            'other' => 'Other Components',
+            'other' => 'Andra komponenter',
         ],
+        'select_all'   => 'Select All',
+        'deselect_all' => 'Deselect All',
     ],
 
     // Incidents
     'incidents' => [
-        'none'          => 'Inga händelser har rapporterats',
-        'past'          => 'Tidigare händelser',
-        'previous_week' => 'Förra veckan',
-        'next_week'     => 'Nästa vecka',
-        'scheduled'     => 'Planerat underhåll',
-        'scheduled_at'  => ', schemalagda: tidsstämpel',
-        'status'        => [
-            0 => 'Schemalagd', // TODO: Hopefully remove this.
+        'none'         => 'Inga händelser har rapporterats',
+        'past'         => 'Tidigare händelser',
+        'stickied'     => 'Stickied Incidents',
+        'scheduled'    => 'Planerat underhåll',
+        'scheduled_at' => ', schemalagda: tidsstämpel',
+        'posted'       => 'Posted :timestamp by :username',
+        'posted_at'    => 'Posted at :timestamp',
+        'status'       => [
             1 => 'Undersöker',
             2 => 'Identifierat',
             3 => 'Bevakar',
@@ -41,11 +44,20 @@ return [
         ],
     ],
 
+    // Schedule
+    'schedules' => [
+        'status' => [
+            0 => 'Upcoming',
+            1 => 'In Progress',
+            2 => 'Complete',
+        ],
+    ],
+
     // Service Status
     'service' => [
-        'good'  => '[0,1] Systemet fungerar |[2,Inf] Alla system fungerar',
-        'bad'   => '[0,1] Systemet har för närvarande problem|[2,Inf] Vissa system har problem',
-        'major' => '[0,1] Stora störningar på tjänsten [2,Inf] Stora störningar på vissa system',
+        'good'  => '[0,1]System operational|[2,*]All systems are operational',
+        'bad'   => '[0,1]The system is experiencing issues|[2,*]Some systems are experiencing issues',
+        'major' => '[0,1]The system is experiencing major issues|[2,*]Some systems are experiencing major issues',
     ],
 
     'api' => [
@@ -65,47 +77,29 @@ return [
 
     // Subscriber
     'subscriber' => [
-        'subscribe' => 'Prenumerera för att få de senaste uppdateringarna',
-        'button'    => 'Prenumerera',
-        'manage'    => [
-            'no_subscriptions' => 'You\'re currently subscribed to all updates.',
-            'my_subscriptions' => 'You\'re currently subscribed to the following updates.',
+        'subscribe'           => 'Subscribe to status changes and incident updates',
+        'unsubscribe'         => 'Unsubscribe',
+        'button'              => 'Prenumerera',
+        'manage_subscription' => 'Manage subscription',
+        'manage'              => [
+            'notifications'       => 'Notifieringar',
+            'notifications_for'   => 'Manage notifications for',
+            'no_subscriptions'    => 'Du prenumererar på alla uppdateringar.',
+            'update_subscription' => 'Update Subscription',
+            'my_subscriptions'    => 'Du prenumererar på följande uppdateringar.',
+            'manage_at_link'      => 'Manage your subscriptions at :link',
         ],
         'email' => [
-            'subscribe'          => 'Prenumerera på epost-uppdateringar.',
-            'subscribed'         => 'Du har börjat prenumerera på e-postmeddelanden, vänligen kontrollera din e-post för att bekräfta din prenumeration.',
-            'verified'           => 'Din epost-prenumeration har bekräftats. Tack!',
-            'manage'             => 'Manage your subscription',
-            'unsubscribe'        => 'Avbeställ epost-uppdateringar.',
-            'unsubscribed'       => 'Din epost-prenumeration har avbrutits.',
-            'failure'            => 'Något blev fel med prenumerationen.',
-            'already-subscribed' => 'Kan inte skapa en prenumeration för :email eftersom den redan prenumererar.',
-            'verify'             => [
-                'text'   => "Please confirm your email subscription to :app_name status updates.\n:link",
-                'html'   => '<p>Please confirm your email subscription to :app_name status updates.</p>',
-                'button' => 'Confirm Subscription',
-            ],
-            'maintenance' => [
-                'subject' => '[Maintenance Scheduled] :name',
-            ],
-            'incident' => [
-                'subject' => '[New Incident] :status: :name',
-            ],
-            'component' => [
-                'subject'       => 'Komponentstatusuppdatering',
-                'text'          => 'Komponenten :component_name har fått en ny status. Komponenten har nu status :component_human_status.\nTack, :app_name',
-                'html'          => '<p>Komponenten :component_name har fått en ny status. Komponenten har nu status :component_human_status.</p><p>Tack, :app_name</p>',
-                'tooltip-title' => 'Prenumerera på uppdateringar för :component_name.',
-            ],
-        ],
-    ],
-
-    'users' => [
-        'email' => [
-            'invite' => [
-                'text'           => "Du har blivit inbjuden till teamet för :app_names statussida, registrera dig genom att trycka på länken.\n:link\nTack, :app_name",
-                'html'           => '<p>Du har blivit inbjuden till teamet :app_names statussida. Registrera dig genom att trycka på <a href=":link"> den här länken</a></p> <p>Tack, :app_name</p>',
-            ],
+            'manage_subscription' => 'We\'ve sent you an email, please click the link to manage your subscription',
+            'subscribe'           => 'Prenumerera på epost-uppdateringar.',
+            'subscribed'          => 'Du har börjat prenumerera på e-postmeddelanden, vänligen kontrollera din e-post för att bekräfta din prenumeration.',
+            'updated-subscribe'   => 'You\'ve succesfully updated your subscriptions.',
+            'verified'            => 'Din epost-prenumeration har bekräftats. Tack!',
+            'manage'              => 'Hantera din prenumeration',
+            'unsubscribe'         => 'Avbeställ epost-uppdateringar.',
+            'unsubscribed'        => 'Din epost-prenumeration har avbrutits.',
+            'failure'             => 'Något blev fel med prenumerationen.',
+            'already-subscribed'  => 'Kan inte skapa en prenumeration för :email eftersom den redan prenumererar.',
         ],
     ],
 
@@ -132,10 +126,20 @@ return [
         ],
     ],
 
+    // Meta descriptions
+    'meta' => [
+        'description' => [
+            'incident'  => 'Details and updates about the :name incident that occurred on :date',
+            'schedule'  => 'Details about the scheduled maintenance period :name starting :startDate',
+            'subscribe' => 'Subscribe to :app in order to receive updates of incidents and scheduled maintenance periods',
+            'overview'  => 'Håll dig uppdaterad med de senaste uppdateringarna från :app.',
+        ],
+    ],
+
     // Other
-    'home'            => 'Home',
-    'description'     => 'Stay up to date with the latest service updates from :app.',
-    'powered_by'      => 'Powered by <a href="https://cachethq.io" class="links">Cachet</a>.',
+    'home'            => 'Hem',
+    'powered_by'      => 'Drivs av <a href="https://cachethq.io" class="links">Cachet</a>.',
+    'timezone'        => 'Times are shown in :timezone.',
     'about_this_site' => 'Om sidan',
     'rss-feed'        => 'RSS',
     'atom-feed'       => 'Atom',

@@ -36,7 +36,7 @@ class UpdateSubscriberSubscriptionCommandHandler
         $subscriber = $command->subscriber;
         $subscriptions = $command->subscriptions ?: [];
 
-        $components = Component::all();
+        $components = Component::enabled()->get();
 
         $updateSubscriptions = $components->filter(function ($item) use ($subscriptions) {
             return in_array($item->id, $subscriptions);
@@ -47,12 +47,12 @@ class UpdateSubscriberSubscriptionCommandHandler
         $subscriber->subscriptions()->delete();
 
         if (!$updateSubscriptions->isEmpty()) {
-            foreach ($updateSubscriptions as $subscription) {
+            $updateSubscriptions->each(function ($subscription) use ($subscriber) {
                 Subscription::firstOrCreate([
                     'subscriber_id' => $subscriber->id,
                     'component_id'  => $subscription->id,
                 ]);
-            }
+            });
         }
 
         $subscriber->save();

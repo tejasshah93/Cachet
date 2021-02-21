@@ -12,18 +12,22 @@
 namespace CachetHQ\Cachet\Models;
 
 use AltThree\Validator\ValidatingTrait;
-use Illuminate\Auth\Authenticatable;
-use Illuminate\Auth\Passwords\CanResetPassword;
-use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
-use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
-class User extends Model implements AuthenticatableContract, CanResetPasswordContract
+/**
+ * This is the user model.
+ *
+ * @author James Brooks <james@alt-three.com>
+ */
+class User extends Authenticatable
 {
-    use Authenticatable, CanResetPassword, ValidatingTrait;
-
+    use Notifiable;
+    use ValidatingTrait;
     /**
      * The admin level of user.
      *
@@ -39,6 +43,15 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     const LEVEL_USER = 2;
 
     /**
+     * The model's attributes.
+     *
+     * @var string[]
+     */
+    protected $attributes = [
+        'welcomed' => false,
+    ];
+
+    /**
      * The attributes that should be casted to native types.
      *
      * @var string[]
@@ -50,6 +63,23 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         'api_key'           => 'string',
         'active'            => 'bool',
         'level'             => 'int',
+        'welcomed'          => 'bool',
+    ];
+
+    /**
+     * The fillable properties.
+     *
+     * @var string[]
+     */
+    protected $fillable = [
+        'username',
+        'password',
+        'google_2fa_secret',
+        'email',
+        'api_key',
+        'active',
+        'level',
+        'welcomed',
     ];
 
     /**
@@ -81,6 +111,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     /**
      * Overrides the models boot method.
+     *
+     * @return void
      */
     public static function boot()
     {
@@ -91,6 +123,30 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
                 $user->api_key = self::generateApiKey();
             }
         });
+    }
+
+    /**
+     * Scope all admin users.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeAdmins(Builder $query)
+    {
+        return $query->where('level', '=', self::LEVEL_ADMIN);
+    }
+
+    /**
+     * Scope all active users.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeActive(Builder $query)
+    {
+        return $query->where('active', '=', true);
     }
 
     /**
@@ -108,18 +164,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     }
 
     /**
-     * Returns a Gravatar URL for the users email address.
-     *
-     * @param int $size
-     *
-     * @return string
-     */
-    public function getGravatarAttribute($size = 200)
-    {
-        return sprintf('https://www.gravatar.com/avatar/%s?size=%d', md5($this->email), $size);
-    }
-
-    /**
      * Find by api_key, or throw an exception.
      *
      * @param string   $token
@@ -131,11 +175,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      */
     public static function findByApiToken($token, $columns = ['*'])
     {
-        $user = static::where('api_key', $token)->first($columns);
-
-        if (!$user) {
-            throw new ModelNotFoundException();
-        }
+        $user = static::where('api_key', $token)->firstOrFail($columns);
 
         return $user;
     }
@@ -147,7 +187,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      */
     public static function generateApiKey()
     {
-        return str_random(20);
+        return Str::random(20);
     }
 
     /**

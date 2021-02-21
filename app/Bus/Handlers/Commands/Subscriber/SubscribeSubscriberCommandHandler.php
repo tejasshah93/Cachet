@@ -17,12 +17,13 @@ use CachetHQ\Cachet\Bus\Events\Subscriber\SubscriberHasSubscribedEvent;
 use CachetHQ\Cachet\Models\Component;
 use CachetHQ\Cachet\Models\Subscriber;
 use CachetHQ\Cachet\Models\Subscription;
+use CachetHQ\Cachet\Notifications\Subscriber\VerifySubscriptionNotification;
 
 /**
  * This is the subscribe subscriber command handler.
  *
  * @author James Brooks <james@alt-three.com>
- * @author Joe Cohen <joe@alt-three.com>
+ * @author Joseph Cohen <joe@alt-three.com>
  * @author Graham Campbell <graham@alt-three.com>
  */
 class SubscribeSubscriberCommandHandler
@@ -36,7 +37,7 @@ class SubscribeSubscriberCommandHandler
      */
     public function handle(SubscribeSubscriberCommand $command)
     {
-        if ($subscriber = Subscriber::where('email', $command->email)->first()) {
+        if ($subscriber = Subscriber::where('email', '=', $command->email)->first()) {
             return $subscriber;
         }
 
@@ -44,23 +45,27 @@ class SubscribeSubscriberCommandHandler
 
         // Decide what to subscribe the subscriber to.
         if ($subscriptions = $command->subscriptions) {
-            $subscriptions = Component::whereIn('id', $subscriptions);
+            $components = Component::whereIn('id', $subscriptions)->get();
         } else {
-            $subscriptions = Component::all();
+            $components = Component::all();
         }
 
-        foreach ($subscriptions as $component) {
+        $components->each(function ($component) use ($subscriber) {
             Subscription::create([
                 'subscriber_id' => $subscriber->id,
                 'component_id'  => $component->id,
             ]);
-        }
+        });
 
         if ($command->verified) {
-            dispatch(new VerifySubscriberCommand($subscriber));
+            execute(new VerifySubscriberCommand($subscriber));
         } else {
-            event(new SubscriberHasSubscribedEvent($subscriber));
+            $subscriber->notify(new VerifySubscriptionNotification());
         }
+
+        event(new SubscriberHasSubscribedEvent($subscriber));
+
+        $subscriber->load('subscriptions');
 
         return $subscriber;
     }

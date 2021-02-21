@@ -21,13 +21,20 @@ class ComponentGroupPresenter extends BasePresenter implements Arrayable
     use TimestampsTrait;
 
     /**
+     * Flag for the enabled_components_lowest function.
+     *
+     * @var bool
+     */
+    protected $enabledComponentsLowest = false;
+
+    /**
      * Returns the lowest component status.
      *
      * @return string|null
      */
     public function lowest_status()
     {
-        if ($component = $this->wrappedObject->enabled_components_lowest()->first()) {
+        if ($component = $this->enabled_components_lowest()) {
             return AutoPresenter::decorate($component)->status;
         }
     }
@@ -39,7 +46,7 @@ class ComponentGroupPresenter extends BasePresenter implements Arrayable
      */
     public function lowest_human_status()
     {
-        if ($component = $this->wrappedObject->enabled_components_lowest()->first()) {
+        if ($component = $this->enabled_components_lowest()) {
             return AutoPresenter::decorate($component)->human_status;
         }
     }
@@ -51,9 +58,23 @@ class ComponentGroupPresenter extends BasePresenter implements Arrayable
      */
     public function lowest_status_color()
     {
-        if ($component = $this->wrappedObject->enabled_components_lowest()->first()) {
+        if ($component = $this->enabled_components_lowest()) {
             return AutoPresenter::decorate($component)->status_color;
         }
+    }
+
+    /**
+     * Return the enabled components from the wrapped object, and cache it if need be.
+     *
+     * @return bool
+     */
+    public function enabled_components_lowest()
+    {
+        if (is_bool($this->enabledComponentsLowest)) {
+            $this->enabledComponentsLowest = $this->wrappedObject->enabled_components_lowest()->first();
+        }
+
+        return $this->enabledComponentsLowest;
     }
 
     /**
@@ -81,7 +102,7 @@ class ComponentGroupPresenter extends BasePresenter implements Arrayable
 
         return $this->wrappedObject->components->filter(function ($component) {
             return $component->status > 1;
-        })->count() === 0;
+        })->isEmpty();
     }
 
     /**
@@ -96,5 +117,28 @@ class ComponentGroupPresenter extends BasePresenter implements Arrayable
             'updated_at'          => $this->updated_at(),
             'lowest_human_status' => $this->lowest_human_status(),
         ]);
+    }
+
+    /**
+     * Determine if any of the contained components have active subscriptions.
+     *
+     * @return bool
+     */
+    public function has_subscriber($subscriptions)
+    {
+        $enabled_components = $this->wrappedObject->enabled_components()->orderBy('order')->pluck('id')->toArray();
+        $intersected = array_intersect($enabled_components, $subscriptions);
+
+        return count($intersected) != 0;
+    }
+
+    /**
+     * Determine the class for collapsed/uncollapsed groups on the subscription form.
+     *
+     * @return string
+     */
+    public function collapse_class_with_subscriptions($subscriptions)
+    {
+        return $this->has_subscriber($subscriptions) ? 'ion-ios-minus-outline' : 'ion-ios-plus-outline';
     }
 }

@@ -13,8 +13,11 @@ use CachetHQ\Cachet\Models\Component;
 use CachetHQ\Cachet\Models\ComponentGroup;
 use CachetHQ\Cachet\Models\Incident;
 use CachetHQ\Cachet\Models\IncidentTemplate;
+use CachetHQ\Cachet\Models\IncidentUpdate;
 use CachetHQ\Cachet\Models\Metric;
 use CachetHQ\Cachet\Models\MetricPoint;
+use CachetHQ\Cachet\Models\Schedule;
+use CachetHQ\Cachet\Models\Setting;
 use CachetHQ\Cachet\Models\Subscriber;
 use CachetHQ\Cachet\Models\Subscription;
 use CachetHQ\Cachet\Models\User;
@@ -25,7 +28,7 @@ $factory->define(Component::class, function ($faker) {
         'name'        => $faker->sentence(),
         'description' => $faker->paragraph(),
         'link'        => $faker->url(),
-        'status'      => random_int(1, 4),
+        'status'      => mt_rand(1, 4),
         'order'       => 0,
     ];
 });
@@ -34,16 +37,19 @@ $factory->define(ComponentGroup::class, function ($faker) {
     return [
         'name'      => $faker->words(2, true),
         'order'     => 0,
-        'collapsed' => random_int(0, 3),
+        'collapsed' => mt_rand(0, 4),
+        'visible'   => $faker->boolean(),
     ];
 });
 
 $factory->define(Incident::class, function ($faker) {
     return [
-        'name'    => $faker->sentence(),
-        'message' => $faker->paragraph(),
-        'status'  => random_int(1, 4),
-        'visible' => 1,
+        'name'     => $faker->sentence(),
+        'user_id'  => factory(User::class)->create()->id,
+        'message'  => $faker->paragraph(),
+        'status'   => mt_rand(1, 4),
+        'visible'  => 1,
+        'stickied' => false,
     ];
 });
 
@@ -52,6 +58,15 @@ $factory->define(IncidentTemplate::class, function ($faker) {
         'name'     => 'Test Template',
         'slug'     => 'test-template',
         'template' => "Name: {{ name }},\nMessage: {{ message }}",
+    ];
+});
+
+$factory->define(IncidentUpdate::class, function ($faker) {
+    return [
+        'incident_id' => factory(Incident::class)->create()->id,
+        'message'     => $faker->paragraph(),
+        'status'      => mt_rand(1, 4),
+        'user_id'     => factory(User::class)->create()->id,
     ];
 });
 
@@ -70,9 +85,34 @@ $factory->define(Metric::class, function ($faker) {
 
 $factory->define(MetricPoint::class, function ($faker) {
     return [
-        'metric_id' => factory(Metric::class)->create()->id,
-        'value'     => random_int(1, 100),
-        'counter'   => 1,
+        'metric_id'  => factory(Metric::class)->create()->id,
+        'value'      => mt_rand(1, 100),
+        'counter'    => 1,
+        'created_at' => Carbon::now(),
+        'updated_at' => Carbon::now(),
+    ];
+});
+
+$factory->define(Schedule::class, function ($faker) {
+    return [
+        'name'         => $faker->sentence(),
+        'message'      => $faker->paragraph(),
+        'status'       => Schedule::UPCOMING,
+        'scheduled_at' => Carbon::now()->addDays(7),
+    ];
+});
+
+$factory->define(Setting::class, function ($faker) {
+    return [
+        'name'  => 'app_name',
+        'value' => 'Cachet Test Demo',
+    ];
+});
+
+$factory->define(Setting::class, function ($faker) {
+    return [
+        'name'  => 'app_refresh_rate',
+        'value' => '0',
     ];
 });
 

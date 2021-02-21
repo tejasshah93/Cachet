@@ -16,8 +16,8 @@ use CachetHQ\Cachet\Bus\Commands\Subscriber\SubscribeSubscriberCommand;
 use CachetHQ\Cachet\Bus\Commands\Subscriber\UnsubscribeSubscriberCommand;
 use CachetHQ\Cachet\Models\Subscriber;
 use GrahamCampbell\Binput\Facades\Binput;
+use Illuminate\Contracts\Config\Repository;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\View;
 
 class SubscriberController extends Controller
@@ -31,7 +31,7 @@ class SubscriberController extends Controller
     {
         return View::make('dashboard.subscribers.index')
             ->withPageTitle(trans('dashboard.subscribers.subscribers').' - '.trans('dashboard.dashboard'))
-            ->withSubscribers(Subscriber::all());
+            ->withSubscribers(Subscriber::with('subscriptions.component')->get());
     }
 
     /**
@@ -52,20 +52,22 @@ class SubscriberController extends Controller
      */
     public function createSubscriberAction()
     {
+        $verified = app(Repository::class)->get('setting.skip_subscriber_verification');
+
         try {
             $subscribers = preg_split("/\r\n|\n|\r/", Binput::get('email'));
 
             foreach ($subscribers as $subscriber) {
-                dispatch(new SubscribeSubscriberCommand($subscriber));
+                execute(new SubscribeSubscriberCommand($subscriber, $verified));
             }
         } catch (ValidationException $e) {
-            return Redirect::route('dashboard.subscribers.add')
+            return cachet_redirect('dashboard.subscribers.create')
                 ->withInput(Binput::all())
                 ->withTitle(sprintf('%s %s', trans('dashboard.notifications.whoops'), trans('dashboard.subscribers.add.failure')))
                 ->withErrors($e->getMessageBag());
         }
 
-        return Redirect::route('dashboard.subscribers.add')
+        return cachet_redirect('dashboard.subscribers.create')
             ->withSuccess(sprintf('%s %s', trans('dashboard.notifications.awesome'), trans('dashboard.subscribers.add.success')));
     }
 
@@ -80,8 +82,8 @@ class SubscriberController extends Controller
      */
     public function deleteSubscriberAction(Subscriber $subscriber)
     {
-        dispatch(new UnsubscribeSubscriberCommand($subscriber));
+        execute(new UnsubscribeSubscriberCommand($subscriber));
 
-        return Redirect::route('dashboard.subscribers.index');
+        return cachet_redirect('dashboard.subscribers');
     }
 }

@@ -20,7 +20,7 @@ class ClaimInviteCommandHandler
     /**
      * Handle the claim invite command.
      *
-     * @param \CachetHQ\Cachet\Bus\Commands\User\ClaimInviteCommand $command
+     * @param \CachetHQ\Cachet\Bus\Commands\Invite\ClaimInviteCommand $command
      *
      * @return void
      */
@@ -28,8 +28,7 @@ class ClaimInviteCommandHandler
     {
         $invite = $command->invite;
 
-        $invite->claimed_at = Carbon::now();
-        $invite->save();
+        $invite->update(['claimed_at' => Carbon::now()]);
 
         event(new InviteWasClaimedEvent($invite));
     }

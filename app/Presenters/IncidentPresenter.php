@@ -11,11 +11,11 @@
 
 namespace CachetHQ\Cachet\Presenters;
 
-use CachetHQ\Cachet\Dates\DateFactory;
+use CachetHQ\Cachet\Models\Incident;
 use CachetHQ\Cachet\Presenters\Traits\TimestampsTrait;
+use CachetHQ\Cachet\Services\Dates\DateFactory;
 use GrahamCampbell\Markdown\Facades\Markdown;
 use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Support\Facades\Config;
 use McCool\LaravelAutoPresenter\BasePresenter;
 
 class IncidentPresenter extends BasePresenter implements Arrayable
@@ -23,13 +23,113 @@ class IncidentPresenter extends BasePresenter implements Arrayable
     use TimestampsTrait;
 
     /**
+     * The date factory instance.
+     *
+     * @var \CachetHQ\Cachet\Services\Dates\DateFactory
+     */
+    protected $dates;
+
+    /**
+     * Flag for the latest function.
+     *
+     * @var bool
+     */
+    protected $latest = false;
+
+    /**
+     * Incident icon lookup.
+     *
+     * @var array
+     */
+    protected $icons = [
+        0 => 'icon ion-android-calendar', // Scheduled
+        1 => 'icon ion-flag oranges', // Investigating
+        2 => 'icon ion-alert yellows', // Identified
+        3 => 'icon ion-eye blues', // Watching
+        4 => 'icon ion-checkmark greens', // Fixed
+    ];
+
+    /**
+     * Create a new presenter.
+     *
+     * @param \CachetHQ\Cachet\Services\Dates\DateFactory $dates
+     * @param \CachetHQ\Cachet\Models\Incident            $resource
+     *
+     * @return void
+     */
+    public function __construct(DateFactory $dates, Incident $resource)
+    {
+        $this->dates = $dates;
+    }
+
+    /**
      * Renders the message from Markdown into HTML.
      *
      * @return string
      */
-    public function formattedMessage()
+    public function formatted_message()
     {
         return Markdown::convertToHtml($this->wrappedObject->message);
+    }
+
+    /**
+     * Return the raw text of the message, even without Markdown.
+     *
+     * @return string
+     */
+    public function raw_message()
+    {
+        return strip_tags($this->formatted_message());
+    }
+
+    /**
+     * Present formatted occurred_at date time.
+     *
+     * @return string
+     */
+    public function occurred_at()
+    {
+        return $this->dates->make($this->wrappedObject->occurred_at)->toDateTimeString();
+    }
+
+    /**
+     * Present diff for humans date time.
+     *
+     * @return string
+     */
+    public function occurred_at_diff()
+    {
+        return $this->dates->make($this->wrappedObject->occurred_at)->diffForHumans();
+    }
+
+    /**
+     * Present formatted date time.
+     *
+     * @return string
+     */
+    public function occurred_at_formatted()
+    {
+        return ucfirst($this->dates->make($this->wrappedObject->occurred_at)->format($this->incidentDateFormat()));
+    }
+
+    /**
+     * Formats the occurred_at time ready to be used by bootstrap-datetimepicker.
+     *
+     * @return string
+     */
+    public function occurred_at_datetimepicker()
+    {
+        return $this->dates->make($this->wrappedObject->occurred_at)->format('Y-m-d H:i');
+    }
+
+    /**
+     * Present formatted date time.
+     *
+     * @return string
+     */
+    public function occurred_at_iso()
+    {
+        return $this->dates->make($this->wrappedObject->occurred_at)->toISO8601String();
     }
 
     /**
@@ -39,7 +139,7 @@ class IncidentPresenter extends BasePresenter implements Arrayable
      */
     public function created_at_diff()
     {
-        return app(DateFactory::class)->make($this->wrappedObject->created_at)->diffForHumans();
+        return $this->dates->make($this->wrappedObject->created_at)->diffForHumans();
     }
 
     /**
@@ -49,17 +149,7 @@ class IncidentPresenter extends BasePresenter implements Arrayable
      */
     public function created_at_formatted()
     {
-        return ucfirst(app(DateFactory::class)->make($this->wrappedObject->created_at)->format(Config::get('setting.incident_date_format', 'l jS F Y H:i:s')));
-    }
-
-    /**
-     * Formats the created_at time ready to be used by bootstrap-datetimepicker.
-     *
-     * @return string
-     */
-    public function created_at_datetimepicker()
-    {
-        return app(DateFactory::class)->make($this->wrappedObject->created_at)->format('d/m/Y H:i');
+        return ucfirst($this->dates->make($this->wrappedObject->created_at)->format($this->incidentDateFormat()));
     }
 
     /**
@@ -69,57 +159,7 @@ class IncidentPresenter extends BasePresenter implements Arrayable
      */
     public function created_at_iso()
     {
-        return app(DateFactory::class)->make($this->wrappedObject->created_at)->toISO8601String();
-    }
-
-    /**
-     * Present formatted date time.
-     *
-     * @return string
-     */
-    public function scheduled_at()
-    {
-        return app(DateFactory::class)->make($this->wrappedObject->scheduled_at)->toDateTimeString();
-    }
-
-    /**
-     * Present diff for humans date time.
-     *
-     * @return string
-     */
-    public function scheduled_at_diff()
-    {
-        return app(DateFactory::class)->make($this->wrappedObject->scheduled_at)->diffForHumans();
-    }
-
-    /**
-     * Present formatted date time.
-     *
-     * @return string
-     */
-    public function scheduled_at_formatted()
-    {
-        return ucfirst(app(DateFactory::class)->make($this->wrappedObject->scheduled_at)->format(Config::get('setting.incident_date_format', 'l jS F Y H:i:s')));
-    }
-
-    /**
-     * Present formatted date time.
-     *
-     * @return string
-     */
-    public function scheduled_at_iso()
-    {
-        return app(DateFactory::class)->make($this->wrappedObject->scheduled_at)->toISO8601String();
-    }
-
-    /**
-     * Formats the scheduled_at time ready to be used by bootstrap-datetimepicker.
-     *
-     * @return string
-     */
-    public function scheduled_at_datetimepicker()
-    {
-        return app(DateFactory::class)->make($this->wrappedObject->scheduled_at)->format('d/m/Y H:i');
+        return $this->dates->make($this->wrappedObject->created_at)->toISO8601String();
     }
 
     /**
@@ -129,11 +169,7 @@ class IncidentPresenter extends BasePresenter implements Arrayable
      */
     public function timestamp_formatted()
     {
-        if ($this->wrappedObject->is_scheduled) {
-            return $this->scheduled_at_formatted;
-        }
-
-        return $this->created_at_formatted;
+        return $this->occurred_at_formatted;
     }
 
     /**
@@ -143,11 +179,7 @@ class IncidentPresenter extends BasePresenter implements Arrayable
      */
     public function timestamp_iso()
     {
-        if ($this->wrappedObject->is_scheduled) {
-            return $this->scheduled_at_iso;
-        }
-
-        return $this->created_at_iso;
+        return $this->occurred_at_iso;
     }
 
     /**
@@ -157,19 +189,8 @@ class IncidentPresenter extends BasePresenter implements Arrayable
      */
     public function icon()
     {
-        switch ($this->wrappedObject->status) {
-            case 0: // Scheduled
-                return 'icon ion-android-calendar';
-            case 1: // Investigating
-                return 'icon ion-flag oranges';
-            case 2: // Identified
-                return 'icon ion-alert yellows';
-            case 3: // Watching
-                return 'icon ion-eye blues';
-            case 4: // Fixed
-                return 'icon ion-checkmark greens';
-            default: // Something actually broke, this shouldn't happen.
-                return '';
+        if (isset($this->icons[$this->wrappedObject->status])) {
+            return $this->icons[$this->wrappedObject->status];
         }
     }
 
@@ -184,6 +205,98 @@ class IncidentPresenter extends BasePresenter implements Arrayable
     }
 
     /**
+     * Returns the latest update.
+     *
+     * @return int|null
+     */
+    public function latest_status()
+    {
+        if ($update = $this->latest()) {
+            return $update->status;
+        }
+
+        return $this->wrappedObject->status;
+    }
+
+    /**
+     * Returns the latest update.
+     *
+     * @return string|null
+     */
+    public function latest_human_status()
+    {
+        if ($update = $this->latest()) {
+            return trans('cachet.incidents.status.'.$update->status);
+        }
+
+        return $this->human_status();
+    }
+
+    /**
+     * Present the latest icon.
+     *
+     * @return string
+     */
+    public function latest_icon()
+    {
+        if ($update = $this->latest()) {
+            if (isset($this->icons[$update->status])) {
+                return $this->icons[$update->status];
+            }
+        }
+
+        return $this->icon();
+    }
+
+    /**
+     * Fetch the latest incident update.
+     *
+     * @return \CachetHQ\Cachet\Models\IncidentUpdate|void
+     */
+    public function latest()
+    {
+        if (is_bool($this->latest)) {
+            $this->latest = $this->wrappedObject->updates()->first();
+        }
+
+        return $this->latest;
+    }
+
+    /**
+     * Get the incident permalink.
+     *
+     * @return string
+     */
+    public function permalink()
+    {
+        return cachet_route('incident', [$this->wrappedObject->id]);
+    }
+
+    /**
+     * The duration since the last update (in seconds).
+     *
+     * @return int
+     */
+    public function duration()
+    {
+        if ($update = $this->latest()) {
+            return $this->wrappedObject->created_at->diffInSeconds($update->occurred_at);
+        }
+
+        return 0;
+    }
+
+    /**
+     * Return the meta in a key value pair.
+     *
+     * @return array
+     */
+    public function meta()
+    {
+        return $this->wrappedObject->meta->pluck('value', 'key')->all();
+    }
+
+    /**
      * Convert the presenter instance to an array.
      *
      * @return string[]
@@ -191,10 +304,17 @@ class IncidentPresenter extends BasePresenter implements Arrayable
     public function toArray()
     {
         return array_merge($this->wrappedObject->toArray(), [
-            'human_status' => $this->human_status(),
-            'scheduled_at' => $this->scheduled_at(),
-            'created_at'   => $this->created_at(),
-            'updated_at'   => $this->updated_at(),
+            'human_status'        => $this->human_status(),
+            'latest_update_id'    => $this->latest() ? $this->latest()->id : null,
+            'latest_status'       => $this->latest_status(),
+            'latest_human_status' => $this->latest_human_status(),
+            'latest_icon'         => $this->latest_icon(),
+            'permalink'           => $this->permalink(),
+            'duration'            => $this->duration(),
+            'meta'                => $this->meta(),
+            'occurred_at'         => $this->occurred_at(),
+            'created_at'          => $this->created_at(),
+            'updated_at'          => $this->updated_at(),
         ]);
     }
 }

@@ -43,9 +43,9 @@ return [
 
     // Service Status
     'service' => [
-        'good'  => '[0,1] Sistema operativo | [2,Inf] Todos los sistemas están operativos',
-        'bad'   => '[0,1] El sistema está actualmente experimentando problemas | [2,Inf] Algunos sistemas están experimentando problemas',
-        'major' => '[0,1] El servicio está experimentando una interrupción mayor | [2, Inf] Algunos sistemas están experimentando una interrupción mayor',
+        'good'  => '[0,1] Sistema operativo|[2,Inf] Todos los sistemas están operativos',
+        'bad'   => '[0,1] El sistema está actualmente experimentando problemas|[2,Inf] Algunos sistemas están experimentando problemas',
+        'major' => '[0,1] El servicio está experimentando una interrupción mayor|[2, Inf] Algunos sistemas están experimentando una interrupción mayor',
     ],
 
     'api' => [
@@ -103,8 +103,8 @@ return [
     'users' => [
         'email' => [
             'invite' => [
-                'text'           => "Te han invitado a la página de estado del equipo de :app_name, para registrarte sigue este enlace.\n:link\nGracias, :app_name",
-                'html'           => '<p>Has sido invitado a la página de estado del equipo :app_name, para inscribirte sigue el siguiente enlace.</p><p><a href=":link">:link</a></p><p>Gracias, :app_name</p>',
+                'text' => "Te han invitado a la página de estado del equipo de :app_name, para registrarte sigue este enlace.\n:link\nGracias, :app_name",
+                'html' => '<p>Has sido invitado a la página de estado del equipo :app_name, para inscribirte sigue el siguiente enlace.</p><p><a href=":link">:link</a></p><p>Gracias, :app_name</p>',
             ],
         ],
     ],

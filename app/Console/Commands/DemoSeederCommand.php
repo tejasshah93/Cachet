@@ -11,15 +11,19 @@
 
 namespace CachetHQ\Cachet\Console\Commands;
 
+use CachetHQ\Cachet\Models\Action;
 use CachetHQ\Cachet\Models\Component;
 use CachetHQ\Cachet\Models\ComponentGroup;
 use CachetHQ\Cachet\Models\Incident;
 use CachetHQ\Cachet\Models\IncidentTemplate;
+use CachetHQ\Cachet\Models\IncidentUpdate;
 use CachetHQ\Cachet\Models\Metric;
 use CachetHQ\Cachet\Models\MetricPoint;
+use CachetHQ\Cachet\Models\Schedule;
 use CachetHQ\Cachet\Models\Subscriber;
 use CachetHQ\Cachet\Models\User;
 use CachetHQ\Cachet\Settings\Repository;
+use Carbon\Carbon;
 use DateInterval;
 use DateTime;
 use Illuminate\Console\Command;
@@ -47,19 +51,19 @@ class DemoSeederCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Seeds Cachet with demo data.';
+    protected $description = 'Seeds Cachet with demo data';
 
     /**
      * The settings repository.
      *
-     * @var \CachetHQ\Cache\Settings\Repository
+     * @var \CachetHQ\Cachet\Settings\Repository
      */
     protected $settings;
 
     /**
      * Create a new demo seeder command instance.
      *
-     * @param \CachetHQ\Cache\Settings\Repository $settings
+     * @param \CachetHQ\Cachet\Settings\Repository $settings
      *
      * @return void
      */
@@ -75,23 +79,35 @@ class DemoSeederCommand extends Command
      *
      * @return void
      */
-    public function fire()
+    public function handle()
     {
         if (!$this->confirmToProceed()) {
             return;
         }
 
+        $this->seedUsers();
+        $this->seedActions();
         $this->seedComponentGroups();
         $this->seedComponents();
         $this->seedIncidents();
         $this->seedIncidentTemplates();
         $this->seedMetricPoints();
         $this->seedMetrics();
+        $this->seedSchedules();
         $this->seedSettings();
         $this->seedSubscribers();
-        $this->seedUsers();
 
         $this->info('Database seeded with demo data successfully!');
+    }
+
+    /**
+     * Seed the actions table.
+     *
+     * @return void
+     */
+    protected function seedActions()
+    {
+        Action::truncate();
     }
 
     /**
@@ -106,10 +122,12 @@ class DemoSeederCommand extends Command
                 'name'      => 'Websites',
                 'order'     => 1,
                 'collapsed' => 0,
+                'visible'   => ComponentGroup::VISIBLE_AUTHENTICATED,
             ], [
                 'name'      => 'Alt Three',
                 'order'     => 2,
                 'collapsed' => 1,
+                'visible'   => ComponentGroup::VISIBLE_GUEST,
             ],
         ];
 
@@ -164,12 +182,12 @@ class DemoSeederCommand extends Command
                 'group_id'    => 2,
                 'link'        => 'https://styleci.io',
             ], [
-                'name'        => 'Patreon Page',
-                'description' => 'Support future development of Cachet.',
+                'name'        => 'GitHub',
+                'description' => '',
                 'status'      => 1,
                 'order'       => 0,
                 'group_id'    => 0,
-                'link'        => 'https://patreon.com/jbrooksuk',
+                'link'        => 'https://github.com/CachetHQ/Cachet',
             ],
         ];
 
@@ -199,59 +217,34 @@ EINCIDENT;
 
         $defaultIncidents = [
             [
-                'name'         => 'Cachet supports Markdown!',
-                'message'      => $incidentMessage,
-                'status'       => 4,
+                'name'         => 'Our monkeys aren\'t performing',
+                'message'      => 'We\'re investigating an issue with our monkeys not performing as they should be.',
+                'status'       => Incident::INVESTIGATING,
                 'component_id' => 0,
-                'scheduled_at' => null,
                 'visible'      => 1,
+                'stickied'     => false,
+                'user_id'      => 1,
+                'occurred_at'  => Carbon::now(),
             ],
             [
-                'name'         => 'Awesome',
-                'message'      => ':+1: We totally nailed the fix.',
-                'status'       => 4,
+                'name'         => 'This is an unresolved incident',
+                'message'      => 'Unresolved incidents are left without a **Fixed** update.',
+                'status'       => Incident::INVESTIGATING,
                 'component_id' => 0,
-                'scheduled_at' => null,
                 'visible'      => 1,
-            ],
-            [
-                'name'         => 'Monitoring the fix',
-                'message'      => ":ship: We've deployed a fix.",
-                'status'       => 3,
-                'component_id' => 0,
-                'scheduled_at' => null,
-                'visible'      => 1,
-            ],
-            [
-                'name'         => 'Update',
-                'message'      => "We've identified the problem. Our engineers are currently looking at it.",
-                'status'       => 2,
-                'component_id' => 0,
-                'scheduled_at' => null,
-                'visible'      => 1,
-            ],
-            [
-                'name'         => 'Test Incident',
-                'message'      => 'Something went wrong, with something or another.',
-                'status'       => 1,
-                'component_id' => 0,
-                'scheduled_at' => null,
-                'visible'      => 1,
-            ],
-            [
-                'name'         => 'Investigating the API',
-                'message'      => ':zap: We\'ve seen high response times from our API. It looks to be fixing itself as time goes on.',
-                'status'       => 1,
-                'component_id' => 1,
-                'scheduled_at' => null,
-                'visible'      => 1,
+                'stickied'     => false,
+                'user_id'      => 1,
+                'occurred_at'  => Carbon::now(),
             ],
         ];
 
         Incident::truncate();
+        IncidentUpdate::truncate();
 
-        foreach ($defaultIncidents as $incident) {
-            Incident::create($incident);
+        foreach ($defaultIncidents as $defaultIncident) {
+            $incident = Incident::create($defaultIncident);
+
+            $this->seedIncidentUpdates($incident);
         }
     }
 
@@ -263,6 +256,47 @@ EINCIDENT;
     protected function seedIncidentTemplates()
     {
         IncidentTemplate::truncate();
+    }
+
+    /**
+     * Seed the incident updates table for a given incident.
+     *
+     * @return void
+     */
+    protected function seedIncidentUpdates($incident)
+    {
+        $defaultUpdates = [
+            1 => [
+                [
+                    'status'  => Incident::FIXED,
+                    'message' => 'The monkeys are back and rested!',
+                    'user_id' => 1,
+                ], [
+                    'status'  => Incident::WATCHED,
+                    'message' => 'Our monkeys need a break from performing. They\'ll be back after a good rest.',
+                    'user_id' => 1,
+                ], [
+                    'status'  => Incident::IDENTIFIED,
+                    'message' => 'We have identified the issue with our lovely performing monkeys.',
+                    'user_id' => 1,
+                ],
+            ],
+            2 => [
+                [
+                    'status'  => Incident::WATCHED,
+                    'message' => 'We\'re actively watching this issue, so it remains unresolved.',
+                    'user_id' => 1,
+                ],
+            ],
+        ];
+
+        $updates = $defaultUpdates[$incident->id];
+
+        foreach ($updates as $updateId => $update) {
+            $update['incident_id'] = $incident->id;
+
+            IncidentUpdate::create($update);
+        }
     }
 
     /**
@@ -313,6 +347,29 @@ EINCIDENT;
     }
 
     /**
+     * Seed the schedules table.
+     *
+     * @return void
+     */
+    protected function seedSchedules()
+    {
+        $defaultSchedules = [
+            [
+                'name'         => 'Demo resets every half hour!',
+                'message'      => 'You can schedule downtime for _your_ service!',
+                'status'       => Schedule::UPCOMING,
+                'scheduled_at' => (new DateTime())->add(new DateInterval('PT2H')),
+            ],
+        ];
+
+        Schedule::truncate();
+
+        foreach ($defaultSchedules as $schedule) {
+            Schedule::create($schedule);
+        }
+    }
+
+    /**
      * Seed the settings table.
      *
      * @return void
@@ -338,6 +395,9 @@ EINCIDENT;
             ], [
                 'key'   => 'app_incident_days',
                 'value' => '7',
+            ], [
+                'key'   => 'app_refresh_rate',
+                'value' => '0',
             ], [
                 'key'   => 'app_analytics',
                 'value' => 'UA-58442674-3',
@@ -384,7 +444,7 @@ EINCIDENT;
             [
                 'username' => 'test',
                 'password' => 'test123',
-                'email'    => 'test@test.com',
+                'email'    => 'test@example.com',
                 'level'    => User::LEVEL_ADMIN,
                 'api_key'  => '9yMHsdioQosnyVK4iCVR',
             ],

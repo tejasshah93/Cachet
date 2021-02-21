@@ -11,13 +11,14 @@
 
 namespace CachetHQ\Cachet\Http\Controllers\Api;
 
-use CachetHQ\Cachet\Bus\Commands\Metric\AddMetricPointCommand;
+use CachetHQ\Cachet\Bus\Commands\Metric\CreateMetricPointCommand;
 use CachetHQ\Cachet\Bus\Commands\Metric\RemoveMetricPointCommand;
 use CachetHQ\Cachet\Bus\Commands\Metric\UpdateMetricPointCommand;
 use CachetHQ\Cachet\Models\Metric;
 use CachetHQ\Cachet\Models\MetricPoint;
 use GrahamCampbell\Binput\Facades\Binput;
 use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class MetricPointController extends AbstractApiController
@@ -30,9 +31,11 @@ class MetricPointController extends AbstractApiController
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getMetricPoints(Metric $metric, MetricPoint $metricPoint)
+    public function index(Metric $metric, MetricPoint $metricPoint)
     {
-        return $this->item($metricPoint);
+        $points = $metric->points()->paginate(Binput::get('per_page', 20));
+
+        return $this->paginator($points, Request::instance());
     }
 
     /**
@@ -42,10 +45,10 @@ class MetricPointController extends AbstractApiController
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function postMetricPoints(Metric $metric)
+    public function store(Metric $metric)
     {
         try {
-            $metricPoint = dispatch(new AddMetricPointCommand(
+            $metricPoint = execute(new CreateMetricPointCommand(
                 $metric,
                 Binput::get('value'),
                 Binput::get('timestamp')
@@ -61,13 +64,13 @@ class MetricPointController extends AbstractApiController
      * Updates a metric point.
      *
      * @param \CachetHQ\Cachet\Models\Metric      $metric
-     * @param \CachetHQ\Cachet\Models\MetircPoint $metricPoint
+     * @param \CachetHQ\Cachet\Models\MetricPoint $metricPoint
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function putMetricPoint(Metric $metric, MetricPoint $metricPoint)
+    public function update(Metric $metric, MetricPoint $metricPoint)
     {
-        $metricPoint = dispatch(new UpdateMetricPointCommand(
+        $metricPoint = execute(new UpdateMetricPointCommand(
             $metricPoint,
             $metric,
             Binput::get('value'),
@@ -85,9 +88,9 @@ class MetricPointController extends AbstractApiController
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function deleteMetricPoint(Metric $metric, MetricPoint $metricPoint)
+    public function destroy(Metric $metric, MetricPoint $metricPoint)
     {
-        dispatch(new RemoveMetricPointCommand($metricPoint));
+        execute(new RemoveMetricPointCommand($metricPoint));
 
         return $this->noContent();
     }

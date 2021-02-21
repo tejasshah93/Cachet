@@ -11,11 +11,12 @@
 
 namespace CachetHQ\Cachet\Http\Controllers\Api;
 
-use CachetHQ\Cachet\Bus\Commands\ComponentGroup\AddComponentGroupCommand;
+use CachetHQ\Cachet\Bus\Commands\ComponentGroup\CreateComponentGroupCommand;
 use CachetHQ\Cachet\Bus\Commands\ComponentGroup\RemoveComponentGroupCommand;
 use CachetHQ\Cachet\Bus\Commands\ComponentGroup\UpdateComponentGroupCommand;
 use CachetHQ\Cachet\Models\ComponentGroup;
 use GrahamCampbell\Binput\Facades\Binput;
+use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -25,23 +26,43 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
  *
  * @author James Brooks <james@alt-three.com>
  * @author Graham Campbell <graham@alt-three.com>
- * @author Joe Cohen <joe@alt-three.com>
+ * @author Joseph Cohen <joe@alt-three.com>
  */
 class ComponentGroupController extends AbstractApiController
 {
+    /**
+     * The user session object.
+     *
+     * @var \Illuminate\Contracts\Auth\Guard
+     */
+    protected $guard;
+
+    /**
+     * Creates a new component group controller instance.
+     *
+     * @param \Illuminate\Contracts\Auth\Guard $guard
+     */
+    public function __construct(Guard $guard)
+    {
+        $this->guard = $guard;
+    }
+
     /**
      * Get all groups.
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getGroups()
+    public function index()
     {
         $groups = ComponentGroup::query();
+        if (!$this->guard->check()) {
+            $groups = ComponentGroup::visible();
+        }
 
         $groups->search(Binput::except(['sort', 'order', 'per_page']));
 
         if ($sortBy = Binput::get('sort')) {
-            $direction = Binput::has('order') && Binput::get('order') == 'desc';
+            $direction = Binput::get('order', 'asc');
 
             $groups->sort($sortBy, $direction);
         }
@@ -58,7 +79,7 @@ class ComponentGroupController extends AbstractApiController
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getGroup(ComponentGroup $group)
+    public function show(ComponentGroup $group)
     {
         return $this->item($group);
     }
@@ -68,13 +89,14 @@ class ComponentGroupController extends AbstractApiController
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function postGroups()
+    public function store()
     {
         try {
-            $group = dispatch(new AddComponentGroupCommand(
+            $group = execute(new CreateComponentGroupCommand(
                 Binput::get('name'),
                 Binput::get('order', 0),
-                Binput::get('collapsed', 0)
+                Binput::get('collapsed', 0),
+                Binput::get('visible', ComponentGroup::VISIBLE_AUTHENTICATED)
             ));
         } catch (QueryException $e) {
             throw new BadRequestHttpException();
@@ -90,14 +112,15 @@ class ComponentGroupController extends AbstractApiController
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function putGroup(ComponentGroup $group)
+    public function update(ComponentGroup $group)
     {
         try {
-            $group = dispatch(new UpdateComponentGroupCommand(
+            $group = execute(new UpdateComponentGroupCommand(
                 $group,
                 Binput::get('name'),
                 Binput::get('order'),
-                Binput::get('collapsed')
+                Binput::get('collapsed'),
+                Binput::get('visible')
             ));
         } catch (QueryException $e) {
             throw new BadRequestHttpException();
@@ -113,9 +136,9 @@ class ComponentGroupController extends AbstractApiController
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function deleteGroup(ComponentGroup $group)
+    public function destroy(ComponentGroup $group)
     {
-        dispatch(new RemoveComponentGroupCommand($group));
+        execute(new RemoveComponentGroupCommand($group));
 
         return $this->noContent();
     }

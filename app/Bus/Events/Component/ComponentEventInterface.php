@@ -13,6 +13,12 @@ namespace CachetHQ\Cachet\Bus\Events\Component;
 
 use CachetHQ\Cachet\Bus\Events\EventInterface;
 
+/**
+ * This is the component event interface.
+ *
+ * @author Graham Campbell <graham@alt-three.com>
+ * @author James Brooks <james@alt-three.com>
+ */
 interface ComponentEventInterface extends EventInterface
 {
     //

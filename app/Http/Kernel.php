@@ -11,7 +11,23 @@
 
 namespace CachetHQ\Cachet\Http;
 
+use Barryvdh\Cors\HandleCors;
+use CachetHQ\Cachet\Http\Middleware\Admin;
+use CachetHQ\Cachet\Http\Middleware\ApiAuthentication;
+use CachetHQ\Cachet\Http\Middleware\Authenticate;
+use CachetHQ\Cachet\Http\Middleware\CacheControl;
+use CachetHQ\Cachet\Http\Middleware\Localize;
+use CachetHQ\Cachet\Http\Middleware\ReadyForUse;
+use CachetHQ\Cachet\Http\Middleware\RedirectIfAuthenticated;
+use CachetHQ\Cachet\Http\Middleware\RemoteUserAuthenticate;
+use CachetHQ\Cachet\Http\Middleware\SetupAlreadyCompleted;
+use CachetHQ\Cachet\Http\Middleware\SubscribersConfigured;
+use CachetHQ\Cachet\Http\Middleware\Throttler;
+use CachetHQ\Cachet\Http\Middleware\TrustProxies;
+use Illuminate\Auth\Middleware\Authorize;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
+use Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode;
+use Illuminate\Routing\Middleware\ValidateSignature;
 
 class Kernel extends HttpKernel
 {
@@ -21,28 +37,8 @@ class Kernel extends HttpKernel
      * @var array
      */
     protected $middleware = [
-        'Fideloper\Proxy\TrustProxies',
-        'Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode',
-    ];
-
-    /**
-     * The application's route middleware groups.
-     *
-     * @var array
-     */
-    protected $middlewareGroups = [
-        'web' => [
-            'Illuminate\Cookie\Middleware\EncryptCookies',
-            'Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse',
-            'Illuminate\Session\Middleware\StartSession',
-            'Illuminate\View\Middleware\ShareErrorsFromSession',
-            'Illuminate\Foundation\Http\Middleware\VerifyCsrfToken',
-        ],
-        'api' => [
-            'Barryvdh\Cors\HandleCors',
-            'CachetHQ\Cachet\Http\Middleware\Acceptable',
-            'CachetHQ\Cachet\Http\Middleware\Timezone',
-        ],
+        TrustProxies::class,
+        CheckForMaintenanceMode::class,
     ];
 
     /**
@@ -51,14 +47,19 @@ class Kernel extends HttpKernel
      * @var array
      */
     protected $routeMiddleware = [
-        'admin'       => 'CachetHQ\Cachet\Http\Middleware\Admin',
-        'auth'        => 'CachetHQ\Cachet\Http\Middleware\Authenticate',
-        'auth.api'    => 'CachetHQ\Cachet\Http\Middleware\ApiAuthentication',
-        'guest'       => 'CachetHQ\Cachet\Http\Middleware\RedirectIfAuthenticated',
-        'localize'    => 'CachetHQ\Cachet\Http\Middleware\Localize',
-        'ready'       => 'CachetHQ\Cachet\Http\Middleware\ReadyForUse',
-        'setup'       => 'CachetHQ\Cachet\Http\Middleware\SetupAlreadyCompleted',
-        'subscribers' => 'CachetHQ\Cachet\Http\Middleware\SubscribersConfigured',
-        'throttle'    => 'AltThree\Throttle\ThrottlingMiddleware',
+        'admin'           => Admin::class,
+        'auth.api'        => ApiAuthentication::class,
+        'auth.remoteuser' => RemoteUserAuthenticate::class,
+        'auth'            => Authenticate::class,
+        'cache'           => CacheControl::class,
+        'can'             => Authorize::class,
+        'cors'            => HandleCors::class,
+        'guest'           => RedirectIfAuthenticated::class,
+        'localize'        => Localize::class,
+        'ready'           => ReadyForUse::class,
+        'setup'           => SetupAlreadyCompleted::class,
+        'signed'          => ValidateSignature::class,
+        'subscribers'     => SubscribersConfigured::class,
+        'throttle'        => Throttler::class,
     ];
 }

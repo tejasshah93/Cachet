@@ -13,19 +13,6 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | PDO Fetch Style
-    |--------------------------------------------------------------------------
-    |
-    | By default, database results will be returned as instances of the PHP
-    | stdClass object; however, you may desire to retrieve records in an
-    | array format for simplicity. Here you can tweak the fetch style.
-    |
-    */
-
-    'fetch' => PDO::FETCH_CLASS,
-
-    /*
-    |--------------------------------------------------------------------------
     | Default Database Connection Name
     |--------------------------------------------------------------------------
     |
@@ -58,43 +45,35 @@ return [
         'sqlite' => [
             'driver'   => 'sqlite',
             'database' => env('DB_DATABASE', database_path('database.sqlite')),
-            'prefix'   => env('DB_PREFIX', null),
+            'prefix'   => '',
         ],
 
         'mysql' => [
-            'driver'    => 'mysql',
-            'host'      => env('DB_HOST', null),
-            'database'  => env('DB_DATABASE', null),
-            'username'  => env('DB_USERNAME', null),
-            'password'  => env('DB_PASSWORD', null),
-            'port'      => env('DB_PORT', '3306'),
-            'charset'   => 'utf8',
-            'collation' => 'utf8_unicode_ci',
-            'prefix'    => env('DB_PREFIX', null),
-            'strict'    => false,
-            'engine'    => null,
+            'driver'      => 'mysql',
+            'host'        => env('DB_HOST', '127.0.0.1'),
+            'unix_socket' => env('DB_UNIX_SOCKET', null),
+            'port'        => env('DB_PORT', '3306'),
+            'database'    => env('DB_DATABASE', 'forge'),
+            'username'    => env('DB_USERNAME', 'forge'),
+            'password'    => env('DB_PASSWORD', ''),
+            'charset'     => 'utf8mb4',
+            'collation'   => 'utf8mb4_unicode_ci',
+            'prefix'      => env('DB_PREFIX', null),
+            'strict'      => false,
+            'engine'      => null,
         ],
 
         'pgsql' => [
-            'driver'    => 'pgsql',
-            'host'      => env('DB_HOST', null),
-            'database'  => env('DB_DATABASE', null),
-            'username'  => env('DB_USERNAME', null),
-            'password'  => env('DB_PASSWORD', null),
-            'port'      => env('DB_PORT', '5432'),
-            'charset'   => 'utf8',
-            'prefix'    => env('DB_PREFIX', null),
-            'schema'    => env('DB_SCHEMA', 'public'),
-        ],
-
-        'sqlsrv' => [
-            'driver'    => 'sqlsrv',
-            'host'      => env('DB_HOST', null),
-            'database'  => env('DB_DATABASE', null),
-            'username'  => env('DB_USERNAME', null),
-            'password'  => env('DB_PASSWORD', null),
-            'port'      => env('DB_PORT', null),
-            'prefix'    => env('DB_PREFIX', null),
+            'driver'   => 'pgsql',
+            'host'     => env('DB_HOST', '127.0.0.1'),
+            'port'     => env('DB_PORT', '5432'),
+            'database' => env('DB_DATABASE', 'forge'),
+            'username' => env('DB_USERNAME', 'forge'),
+            'password' => env('DB_PASSWORD', ''),
+            'charset'  => 'utf8',
+            'prefix'   => env('DB_PREFIX', null),
+            'schema'   => env('DB_SCHEMA', 'public'),
+            'sslmode'  => 'prefer',
         ],
 
     ],
@@ -125,13 +104,13 @@ return [
 
     'redis' => [
 
-        'cluster' => false,
+        'client' => 'predis',
 
         'default' => [
             'host'     => env('REDIS_HOST', '127.0.0.1'),
+            'password' => env('REDIS_PASSWORD', null),
             'port'     => env('REDIS_PORT', 6379),
             'database' => env('REDIS_DATABASE', 0),
-            'password' => env('REDIS_PASSWORD', null),
         ],
 
     ],

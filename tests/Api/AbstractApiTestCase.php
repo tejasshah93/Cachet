@@ -19,6 +19,7 @@ use Illuminate\Foundation\Testing\DatabaseMigrations;
  * This is the abstract api test case class.
  *
  * @author Graham Campbell <graham@alt-three.com>
+ * @author James Brooks <james@alt-three.com>
  */
 abstract class AbstractApiTestCase extends AbstractTestCase
 {
@@ -26,11 +27,17 @@ abstract class AbstractApiTestCase extends AbstractTestCase
 
     /**
      * Become a user.
+     *
+     * @return $this
      */
     protected function beUser()
     {
-        $this->user = factory(User::class)->create();
+        $this->user = factory(User::class)->create([
+            'username' => 'cachet-test',
+        ]);
 
         $this->be($this->user);
+
+        return $this;
     }
 }

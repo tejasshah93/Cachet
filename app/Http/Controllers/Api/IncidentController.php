@@ -11,8 +11,8 @@
 
 namespace CachetHQ\Cachet\Http\Controllers\Api;
 
+use CachetHQ\Cachet\Bus\Commands\Incident\CreateIncidentCommand;
 use CachetHQ\Cachet\Bus\Commands\Incident\RemoveIncidentCommand;
-use CachetHQ\Cachet\Bus\Commands\Incident\ReportIncidentCommand;
 use CachetHQ\Cachet\Bus\Commands\Incident\UpdateIncidentCommand;
 use CachetHQ\Cachet\Models\Incident;
 use GrahamCampbell\Binput\Facades\Binput;
@@ -28,7 +28,7 @@ class IncidentController extends AbstractApiController
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getIncidents()
+    public function index()
     {
         $incidentVisibility = app(Guard::class)->check() ? 0 : 1;
 
@@ -54,7 +54,7 @@ class IncidentController extends AbstractApiController
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getIncident(Incident $incident)
+    public function show(Incident $incident)
     {
         return $this->item($incident);
     }
@@ -64,20 +64,22 @@ class IncidentController extends AbstractApiController
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function postIncidents()
+    public function store()
     {
         try {
-            $incident = dispatch(new ReportIncidentCommand(
+            $incident = execute(new CreateIncidentCommand(
                 Binput::get('name'),
                 Binput::get('status'),
-                Binput::get('message'),
-                Binput::get('visible', true),
+                Binput::get('message', null, false, false),
+                (bool) Binput::get('visible', true),
                 Binput::get('component_id'),
                 Binput::get('component_status'),
-                Binput::get('notify', true),
-                Binput::get('created_at'),
+                (bool) Binput::get('notify', true),
+                (bool) Binput::get('stickied', false),
+                Binput::get('occurred_at'),
                 Binput::get('template'),
-                Binput::get('vars')
+                Binput::get('vars', []),
+                Binput::get('meta', [])
             ));
         } catch (QueryException $e) {
             throw new BadRequestHttpException();
@@ -93,21 +95,22 @@ class IncidentController extends AbstractApiController
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function putIncident(Incident $incident)
+    public function update(Incident $incident)
     {
         try {
-            $incident = dispatch(new UpdateIncidentCommand(
+            $incident = execute(new UpdateIncidentCommand(
                 $incident,
                 Binput::get('name'),
                 Binput::get('status'),
                 Binput::get('message'),
-                Binput::get('visible', true),
+                (bool) Binput::get('visible', true),
                 Binput::get('component_id'),
                 Binput::get('component_status'),
-                Binput::get('notify', true),
-                Binput::get('created_at'),
+                (bool) Binput::get('notify', true),
+                (bool) Binput::get('stickied', false),
+                Binput::get('occurred_at'),
                 Binput::get('template'),
-                Binput::get('vars')
+                Binput::get('vars', [])
             ));
         } catch (QueryException $e) {
             throw new BadRequestHttpException();
@@ -123,9 +126,9 @@ class IncidentController extends AbstractApiController
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function deleteIncident(Incident $incident)
+    public function destroy(Incident $incident)
     {
-        dispatch(new RemoveIncidentCommand($incident));
+        execute(new RemoveIncidentCommand($incident));
 
         return $this->noContent();
     }

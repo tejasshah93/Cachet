@@ -15,12 +15,34 @@ use AltThree\Validator\ValidatingTrait;
 use CachetHQ\Cachet\Models\Traits\SearchableTrait;
 use CachetHQ\Cachet\Models\Traits\SortableTrait;
 use CachetHQ\Cachet\Presenters\ComponentGroupPresenter;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 use McCool\LaravelAutoPresenter\HasPresenter;
 
+/**
+ * This is the component group model class.
+ *
+ * @author James Brooks <james@alt-three.com>
+ */
 class ComponentGroup extends Model implements HasPresenter
 {
-    use SearchableTrait, SortableTrait, ValidatingTrait;
+    use SearchableTrait;
+    use SortableTrait;
+    use ValidatingTrait;
+    /**
+     * Viewable only authenticated users.
+     *
+     * @var int
+     */
+    const VISIBLE_AUTHENTICATED = 0;
+
+    /**
+     * Viewable by public.
+     *
+     * @var int
+     */
+    const VISIBLE_GUEST = 1;
 
     /**
      * The model's attributes.
@@ -30,6 +52,7 @@ class ComponentGroup extends Model implements HasPresenter
     protected $attributes = [
         'order'     => 0,
         'collapsed' => 0,
+        'visible'   => 0,
     ];
 
     /**
@@ -41,6 +64,7 @@ class ComponentGroup extends Model implements HasPresenter
         'name'      => 'string',
         'order'     => 'int',
         'collapsed' => 'int',
+        'visible'   => 'int',
     ];
 
     /**
@@ -48,7 +72,7 @@ class ComponentGroup extends Model implements HasPresenter
      *
      * @var string[]
      */
-    protected $fillable = ['name', 'order', 'collapsed'];
+    protected $fillable = ['name', 'order', 'collapsed', 'visible'];
 
     /**
      * The validation rules.
@@ -57,8 +81,9 @@ class ComponentGroup extends Model implements HasPresenter
      */
     public $rules = [
         'name'      => 'required|string',
-        'order'     => 'int',
-        'collapsed' => 'int',
+        'order'     => 'required|int',
+        'collapsed' => 'required|int|between:0,4',
+        'visible'   => 'required|bool',
     ];
 
     /**
@@ -71,6 +96,7 @@ class ComponentGroup extends Model implements HasPresenter
         'name',
         'order',
         'collapsed',
+        'visible',
     ];
 
     /**
@@ -83,6 +109,7 @@ class ComponentGroup extends Model implements HasPresenter
         'name',
         'order',
         'collapsed',
+        'visible',
     ];
 
     /**
@@ -93,13 +120,13 @@ class ComponentGroup extends Model implements HasPresenter
     protected $with = ['enabled_components', 'enabled_components_lowest'];
 
     /**
-     * A group can have many components.
+     * Get the components relation.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function components()
     {
-        return $this->hasMany(Component::class, 'group_id', 'id')->orderBy('order');
+        return $this->hasMany(Component::class, 'group_id', 'id');
     }
 
     /**
@@ -119,7 +146,7 @@ class ComponentGroup extends Model implements HasPresenter
      */
     public function enabled_components()
     {
-        return $this->components()->enabled();
+        return $this->components()->enabled()->orderBy('order');
     }
 
     /**
@@ -140,5 +167,31 @@ class ComponentGroup extends Model implements HasPresenter
     public function getPresenterClass()
     {
         return ComponentGroupPresenter::class;
+    }
+
+    /**
+     * Finds all component groups which are visible to public.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeVisible(Builder $query)
+    {
+        return $query->where('visible', '=', self::VISIBLE_GUEST);
+    }
+
+    /**
+     * Finds all used component groups.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param \Illuminate\Support\Collection        $usedComponentGroups
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeUsed(Builder $query, Collection $usedComponentGroups)
+    {
+        return $query->whereIn('id', $usedComponentGroups)
+            ->orderBy('order');
     }
 }

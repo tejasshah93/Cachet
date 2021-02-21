@@ -11,21 +11,20 @@
 
 namespace CachetHQ\Cachet\Bus\Handlers\Events\Component;
 
-use CachetHQ\Cachet\Bus\Events\Component\ComponentWasUpdatedEvent;
+use CachetHQ\Cachet\Bus\Events\Component\ComponentStatusWasChangedEvent;
+use CachetHQ\Cachet\Integrations\Contracts\System;
 use CachetHQ\Cachet\Models\Component;
 use CachetHQ\Cachet\Models\Subscriber;
-use Illuminate\Contracts\Mail\MailQueue;
-use Illuminate\Mail\Message;
-use McCool\LaravelAutoPresenter\Facades\AutoPresenter;
+use CachetHQ\Cachet\Notifications\Component\ComponentStatusChangedNotification;
 
 class SendComponentUpdateEmailNotificationHandler
 {
     /**
-     * The mailer instance.
+     * The system instance.
      *
-     * @var \Illuminate\Contracts\Mail\Mailer
+     * @var \CachetHQ\Cachet\Integrations\Contracts\System
      */
-    protected $mailer;
+    protected $system;
 
     /**
      * The subscriber instance.
@@ -37,34 +36,43 @@ class SendComponentUpdateEmailNotificationHandler
     /**
      * Create a new send incident email notification handler.
      *
-     * @param \Illuminate\Contracts\Mail\Mailer  $mailer
      * @param \CachetHQ\Cachet\Models\Subscriber $subscriber
      *
      * @return void
      */
-    public function __construct(MailQueue $mailer, Subscriber $subscriber)
+    public function __construct(System $system, Subscriber $subscriber)
     {
-        $this->mailer = $mailer;
+        $this->system = $system;
         $this->subscriber = $subscriber;
     }
 
     /**
      * Handle the event.
      *
-     * @param \CachetHQ\Cachet\Bus\Events\Component\ComponentWasUpdatedEvent $event
+     * @param \CachetHQ\Cachet\Bus\Events\Component\ComponentStatusWasChangedEvent $event
      *
      * @return void
      */
-    public function handle(ComponentWasUpdatedEvent $event)
+    public function handle(ComponentStatusWasChangedEvent $event)
     {
         $component = $event->component;
+
+        // If we're silent or the notifications are suppressed don't send this.
+        if ($event->silent || !$this->system->canNotifySubscribers()) {
+            return;
+        }
+
+        // Don't email anything if the status hasn't changed.
+        if ($event->original_status === $event->new_status) {
+            return;
+        }
 
         // First notify all global subscribers.
         $globalSubscribers = $this->subscriber->isVerified()->isGlobal()->get();
 
-        foreach ($globalSubscribers as $subscriber) {
-            $this->notify($component, $subscriber);
-        }
+        $globalSubscribers->each(function ($subscriber) use ($component, $event) {
+            $subscriber->notify(new ComponentStatusChangedNotification($component, $event->new_status));
+        });
 
         $notified = $globalSubscribers->pluck('id')->all();
 
@@ -77,37 +85,8 @@ class SendComponentUpdateEmailNotificationHandler
                 return in_array($subscriber->id, $notified);
             });
 
-        foreach ($componentSubscribers as $subscriber) {
-            $this->notify($component, $subscriber);
-        }
-    }
-
-    /**
-     * Send notification to subscriber.
-     *
-     * @param \CachetHQ\Cachet\Models\Component  $component
-     * @param \CachetHQ\Cachet\Models\Subscriber $subscriber
-     *
-     * @return \Illuminate\Database\Eloquent\Collection
-     */
-    public function notify(Component $component, Subscriber $subscriber)
-    {
-        $component = AutoPresenter::decorate($component);
-
-        $mail = [
-            'subject'                => trans('cachet.subscriber.email.component.subject'),
-            'component_name'         => $component->name,
-            'component_human_status' => $component->human_status,
-        ];
-
-        $mail['email'] = $subscriber->email;
-        $mail['manage_link'] = route('subscribe.manage', ['code' => $subscriber->verify_code]);
-
-        $this->mailer->queue([
-            'html' => 'emails.components.update-html',
-            'text' => 'emails.components.update-text',
-        ], $mail, function (Message $message) use ($mail) {
-            $message->to($mail['email'])->subject($mail['subject']);
+        $componentSubscribers->each(function ($subscriber) use ($component, $event) {
+            $subscriber->notify(new ComponentStatusChangedNotification($component, $event->new_status));
         });
     }
 }

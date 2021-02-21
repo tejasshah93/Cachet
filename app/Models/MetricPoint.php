@@ -13,12 +13,30 @@ namespace CachetHQ\Cachet\Models;
 
 use AltThree\Validator\ValidatingTrait;
 use CachetHQ\Cachet\Presenters\MetricPointPresenter;
+use Carbon\Carbon;
+use DateTime;
 use Illuminate\Database\Eloquent\Model;
 use McCool\LaravelAutoPresenter\HasPresenter;
 
+/**
+ * This is the metric point model class.
+ *
+ * @author James Brooks <james@alt-three.com>
+ * @author Joseph Cohen <joe@alt-three.com>
+ * @author Graham Campbell <graham@alt-three.com>
+ */
 class MetricPoint extends Model implements HasPresenter
 {
     use ValidatingTrait;
+
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var string[]
+     */
+    protected $appends = [
+        'calculated_value',
+    ];
 
     /**
      * The model's attributes.
@@ -59,11 +77,11 @@ class MetricPoint extends Model implements HasPresenter
      * @var string[]
      */
     public $rules = [
-        'value' => 'numeric|required',
+        'value' => 'required|numeric',
     ];
 
     /**
-     * A metric point belongs to a metric unit.
+     * Get the metric relation.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
@@ -73,21 +91,40 @@ class MetricPoint extends Model implements HasPresenter
     }
 
     /**
-     * Override the value attribute.
+     * Show the actual calculated value; as per (value * counter).
      *
-     * @param mixed $value
-     *
-     * @return float
+     * @return int
      */
-    public function getActiveValueAttribute($value)
+    public function getCalculatedValueAttribute()
     {
-        if ($this->metric->calc_type === Metric::CALC_SUM) {
-            return round((float) $value * $this->counter, $this->metric->places);
-        } elseif ($this->metric->calc_type === Metric::CALC_AVG) {
-            return round((float) $value * $this->counter, $this->metric->places);
+        return $this->value * $this->counter;
+    }
+
+    /**
+     * Round the created at value into intervals of 30 seconds.
+     *
+     * @param string $createdAt
+     *
+     * @return string|void
+     */
+    public function setCreatedAtAttribute($createdAt)
+    {
+        if (!$createdAt) {
+            return;
         }
 
-        return round((float) $value, $this->metric->places);
+        if (!$createdAt instanceof DateTime) {
+            $createdAt = Carbon::parse($createdAt);
+        }
+
+        $timestamp = $createdAt->format('U');
+        $timestamp = 30 * round($timestamp / 30);
+
+        $date = Carbon::createFromFormat('U', $timestamp)->toDateTimeString();
+
+        $this->attributes['created_at'] = $date;
+
+        return $date;
     }
 
     /**

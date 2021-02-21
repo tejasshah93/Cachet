@@ -11,21 +11,26 @@
 
 namespace CachetHQ\Cachet\Http\Controllers;
 
+use CachetHQ\Cachet\Bus\Commands\System\Config\UpdateConfigCommand;
 use CachetHQ\Cachet\Models\User;
 use CachetHQ\Cachet\Settings\Repository;
-use Dotenv\Dotenv;
-use Dotenv\Exception\InvalidPathException;
 use GrahamCampbell\Binput\Facades\Binput;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Response;
-use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
 
+/**
+ * This is the setup controller.
+ *
+ * @author James Brooks <james@alt-three.com>
+ * @author Graham Campbell <graham@alt-three.com>
+ * @author Joseph Cohen <joe@alt-three.com>
+ */
 class SetupController extends Controller
 {
     /**
@@ -53,9 +58,23 @@ class SetupController extends Controller
         'sendmail'  => 'Sendmail',
         'mailgun'   => 'Mailgun',
         'mandrill'  => 'Mandrill',
-        // 'ses'       => 'Amazon SES', this will be available only if aws/aws-sdk-php is installed
+        'ses'       => 'Amazon SES',
         'sparkpost' => 'SparkPost',
         'log'       => 'Log (Testing)',
+    ];
+
+    /**
+     * Array of queue drivers.
+     *
+     * @var string[]
+     */
+    protected $queueDrivers = [
+        'null'       => 'None',
+        'sync'       => 'Synchronous',
+        'database'   => 'Database',
+        'beanstalkd' => 'Beanstalk',
+        'sqs'        => 'Amazon SQS',
+        'redis'      => 'Redis',
     ];
 
     /**
@@ -89,6 +108,7 @@ class SetupController extends Controller
         $this->rulesStep1 = [
             'env.cache_driver'   => 'required|in:'.implode(',', array_keys($this->cacheDrivers)),
             'env.session_driver' => 'required|in:'.implode(',', array_keys($this->cacheDrivers)),
+            'env.queue_driver'   => 'required|in:'.implode(',', array_keys($this->queueDrivers)),
             'env.mail_driver'    => 'required|in:'.implode(',', array_keys($this->mailDrivers)),
         ];
 
@@ -114,24 +134,53 @@ class SetupController extends Controller
      */
     public function getIndex()
     {
-        $supportedLanguages = Request::getLanguages();
+        $requestedLanguages = Request::getLanguages();
         $userLanguage = Config::get('app.locale');
+        $langs = Config::get('langs');
 
-        foreach ($supportedLanguages as $language) {
+        foreach ($requestedLanguages as $language) {
             $language = str_replace('_', '-', $language);
 
-            if (isset($this->langs[$language])) {
+            if (isset($langs[$language])) {
                 $userLanguage = $language;
                 break;
             }
         }
 
-        return View::make('setup')
+        app('translator')->setLocale($userLanguage);
+
+        // Since .env may already be configured, we should show that data!
+        $cacheConfig = [
+            'driver' => Config::get('cache.default'),
+        ];
+
+        $sessionConfig = [
+            'driver' => Config::get('session.driver'),
+        ];
+
+        $queueConfig = [
+            'driver' => Config::get('queue.default'),
+        ];
+
+        $mailConfig = [
+            'driver'   => Config::get('mail.driver'),
+            'host'     => Config::get('mail.host'),
+            'from'     => Config::get('mail.from'),
+            'username' => Config::get('mail.username'),
+            'password' => Config::get('mail.password'),
+        ];
+
+        return View::make('setup.index')
             ->withPageTitle(trans('setup.setup'))
             ->withCacheDrivers($this->cacheDrivers)
+            ->withQueueDrivers($this->queueDrivers)
             ->withMailDrivers($this->mailDrivers)
             ->withUserLanguage($userLanguage)
-            ->withAppUrl(Request::root());
+            ->withAppUrl(Request::root())
+            ->withCacheConfig($cacheConfig)
+            ->withSessionConfig($sessionConfig)
+            ->withQueueConfig($queueConfig)
+            ->withMailConfig($mailConfig);
     }
 
     /**
@@ -146,11 +195,15 @@ class SetupController extends Controller
         $v = Validator::make($postData, $this->rulesStep1);
 
         $v->sometimes('env.mail_host', 'required', function ($input) {
-            return $input->mail_driver === 'smtp';
+            return $input->env['mail_driver'] === 'smtp';
         });
 
-        $v->sometimes(['env.mail_address', 'env.mail_username', 'env.mail_password'], 'required', function ($input) {
-            return $input->mail_driver !== 'log';
+        $v->sometimes(['env.mail_address', 'env.mail_password'], 'required', function ($input) {
+            return !in_array($input->env['mail_driver'], ['log', 'smtp']);
+        });
+
+        $v->sometimes(['env.mail_username'], 'required', function ($input) {
+            return !in_array($input->env['mail_driver'], ['sendmail', 'log']);
         });
 
         if ($v->passes()) {
@@ -191,7 +244,7 @@ class SetupController extends Controller
 
         if ($v->passes()) {
             // Pull the user details out.
-            $userDetails = array_pull($postData, 'user');
+            $userDetails = Arr::pull($postData, 'user');
 
             $user = User::create([
                 'username' => $userDetails['username'],
@@ -204,60 +257,28 @@ class SetupController extends Controller
 
             $setting = app(Repository::class);
 
-            $settings = array_pull($postData, 'settings');
+            $settings = Arr::pull($postData, 'settings');
 
             foreach ($settings as $settingName => $settingValue) {
                 $setting->set($settingName, $settingValue);
             }
 
-            $envData = array_pull($postData, 'env');
+            $envData = Arr::pull($postData, 'env');
 
             // Write the env to the .env file.
-            foreach ($envData as $envKey => $envValue) {
-                $this->writeEnv($envKey, $envValue);
-            }
-
-            Session::flash('setup.done', true);
+            execute(new UpdateConfigCommand($envData));
 
             if (Request::ajax()) {
                 return Response::json(['status' => 1]);
             }
 
-            return Redirect::to('dashboard');
+            return cachet_redirect('dashboard');
         }
 
         if (Request::ajax()) {
             return Response::json(['errors' => $v->getMessageBag()], 400);
         }
 
-        return Redirect::route('setup.index')->withInput()->withErrors($v->getMessageBag());
-    }
-
-    /**
-     * Writes to the .env file with given parameters.
-     *
-     * @param string $key
-     * @param mixed  $value
-     *
-     * @return void
-     */
-    protected function writeEnv($key, $value)
-    {
-        $dir = app()->environmentPath();
-        $file = app()->environmentFile();
-        $path = "{$dir}/{$file}";
-
-        try {
-            (new Dotenv($dir, $file))->load();
-
-            $envKey = strtoupper($key);
-            $envValue = env($envKey) ?: 'null';
-
-            file_put_contents($path, str_replace(
-                $envKey.'='.$envValue, $envKey.'='.$value, file_get_contents($path)
-            ));
-        } catch (InvalidPathException $e) {
-            //
-        }
+        return cachet_redirect('setup')->withInput()->withErrors($v->getMessageBag());
     }
 }

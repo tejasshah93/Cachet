@@ -36,15 +36,17 @@ class ApiController extends AbstractApiController
     public function postUpdateComponent(Component $component)
     {
         try {
-            dispatch(new UpdateComponentCommand(
+            execute(new UpdateComponentCommand(
                 $component,
-                null,
-                null,
+                $component->name,
+                $component->description,
                 Binput::get('status'),
-                null,
-                null,
-                null,
-                null
+                $component->link,
+                $component->order,
+                $component->group_id,
+                $component->enabled,
+                $component->meta,
+                false
             ));
         } catch (QueryException $e) {
             throw new BadRequestHttpException();
@@ -64,15 +66,19 @@ class ApiController extends AbstractApiController
 
         foreach ($componentData as $order => $componentId) {
             try {
-                dispatch(new UpdateComponentCommand(
-                    Component::find($componentId),
-                    null,
-                    null,
-                    null,
-                    null,
+                $component = Component::find($componentId);
+
+                execute(new UpdateComponentCommand(
+                    $component,
+                    $component->name,
+                    $component->description,
+                    $component->status,
+                    $component->link,
                     $order + 1,
-                    null,
-                    null
+                    $component->group_id,
+                    $component->enabled,
+                    $component->meta,
+                    true
                 ));
             } catch (QueryException $e) {
                 throw new BadRequestHttpException();
@@ -92,11 +98,14 @@ class ApiController extends AbstractApiController
         $groupData = Binput::get('ids');
 
         foreach ($groupData as $order => $groupId) {
-            dispatch(new UpdateComponentGroupCommand(
-                ComponentGroup::find($groupId),
-                null,
+            $group = ComponentGroup::find($groupId);
+
+            execute(new UpdateComponentGroupCommand(
+                $group,
+                $group->name,
                 $order + 1,
-                null
+                $group->collapsed,
+                $group->visible
             ));
         }
 
@@ -114,7 +123,7 @@ class ApiController extends AbstractApiController
     {
         $templateSlug = Binput::get('slug');
 
-        if ($template = IncidentTemplate::where('slug', $templateSlug)->first()) {
+        if ($template = IncidentTemplate::where('slug', '=', $templateSlug)->first()) {
             return $template;
         }
 

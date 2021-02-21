@@ -26,6 +26,7 @@ class IncidentTemplate extends Model
      */
     protected $casts = [
         'name'     => 'string',
+        'slug'     => 'string',
         'template' => 'string',
     ];
 
@@ -34,7 +35,7 @@ class IncidentTemplate extends Model
      *
      * @var string[]
      */
-    protected $fillable = ['name', 'template'];
+    protected $fillable = ['name', 'slug', 'template'];
 
     /**
      * The validation rules.
@@ -42,32 +43,38 @@ class IncidentTemplate extends Model
      * @var string[]
      */
     public $rules = [
-        'name'     => 'required',
-        'template' => 'required',
+        'name'     => 'required|string',
+        'template' => 'required|string',
     ];
 
     /**
      * Overrides the models boot method.
+     *
+     * @return void
      */
     public static function boot()
     {
         parent::boot();
 
         self::saving(function ($template) {
-            $template->slug = Str::slug($template->name);
+            if (!$template->slug) {
+                $template->slug = Str::slug($template->name);
+            }
         });
     }
 
     /**
      * Finds a template by the slug.
      *
-     * @param \Illuminate\Database\Query\Builder $query
-     * @param string                             $slug
+     * @param string   $slug
+     * @param string[] $columns
      *
      * @return \Illuminate\Database\Query\Builder
      */
-    public function scopeForSlug($query, $slug)
+    public static function forSlug($slug, $columns = ['*'])
     {
-        return $query->where('slug', $slug);
+        $template = static::where('slug', '=', $slug)->firstOrFail($columns);
+
+        return $template;
     }
 }

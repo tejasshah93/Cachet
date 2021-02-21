@@ -1,109 +1,102 @@
-# Cachet
+<p align="center"><img src="https://demo.cachethq.io/img/cachet-logo.svg" width="50%"></p>
 
-[![StyleCI](https://styleci.io/repos/26730195/shield)](https://styleci.io/repos/26730195/)
-[![Build Status](https://img.shields.io/travis/CachetHQ/Cachet/master.svg?style=flat-square)](https://travis-ci.org/CachetHQ/Cachet)
-[![Software License](https://img.shields.io/badge/license-BSD3-brightgreen.svg?style=flat-square)](LICENSE)
-[![Crowdin](https://d322cqt584bo4o.cloudfront.net/cachet/localized.svg)](http://translate.cachethq.io/project/cachet)
-[![Packagist](https://img.shields.io/packagist/v/cachethq/cachet.svg?style=flat-square)](https://packagist.org/packages/cachethq/cachet)
+<p align="center">
+<a href="https://styleci.io/repos/26730195/"><img src="https://styleci.io/repos/26730195/shield" alt="StyleCI"></a>
+<a href="LICENSE"><img src="https://img.shields.io/badge/license-BSD3-brightgreen.svg?style=flat-square" alt="License"></a>
+<a href="https://translate.cachethq.io/project/cachet"><img src="https://d322cqt584bo4o.cloudfront.net/cachet/localized.svg" alt="Localisation"></a>
+<a href="https://github.com/CachetHQ/Cachet/releases"><img src="https://img.shields.io/github/release/cachethq/cachet.svg?style=flat-square" alt="Latest Stable Version"></a>
+</p>
 
-![Screenshot](https://cachethq.io/img/main-interface.jpg)
+Cachet is a beautiful and powerful open source status page system.
 
-Cachet is a beautiful and powerful open source status page system, a free replacement to services such as StatusPage.io, Status.io and others.
+## Overview
 
-## Supporting Cachet
-
-Cachet is a BSD-3-licensed open source project. If you'd like to support future development, check out the [Cachet Patreon campaign](https://patreon.com/jbrooksuk).
-
-## Features
-
-- List your services components
-- Log incidents
-- Apply custom CSS to the status page
+- List your service components
+- Report incidents
+- Customise the look of your status page
 - Markdown support for incident messages
-- JSON API
-- Translated into eleven languages
+- A powerful JSON API
 - Metrics
-- Cross-database support: MySQL, PostgreSQL and SQLite
-- Subscriber notifications via Email
-- Two factor authentication, with Google Authenticator
+- Multi-lingual
+- Subscriber notifications via email
+- Two factor authentication
 
-## Usage in production
+## Community
 
-The `master` branch of this repository is a development branch and **should not** be used in production. Instead, please check out the latest tag release.
+You can now [join our Slack community!](http://cachethq-slack.herokuapp.com)
 
 ## Requirements
 
-- PHP 5.5.9+ or newer
-- Apache or Nginx server
+- PHP 7.1.3 – 7.3
+- HTTP server with PHP support (e.g.: Apache, Nginx, Caddy)
 - [Composer](https://getcomposer.org)
-
-## How to contribute
-
-We're always looking for contributions that improve Cachet. It's easy to get started and you don't even need to know how to write a single line of code!
-
-### Contributing as a non-developer/non-designer
-
-If you're one of the more linguistically talented people in the world who can speak and write more than just English, we're always looking for new [translations](#translations).
-
-Of course bug reports, feature requests and [documentation](https://docs.cachethq.io) are always being sought after.
-
-### Contributing as a designer
-
-As Cachet gains new features, the design and ideas that were once a perfect fit need updating and in some cases designing from scratch. This is where you come in! Fancy giving Cachet a lick of paint? Sweet!
-
-You'll need to install Node.js, Bower and Gulp.
-
-To get started you can do the following:
-
-1. Install Node.js and our dev dependencies.
-2. Modify the SCSS files in `./resources/assets/sass/`
-3. Run `gulp`
-
-If you're making a lot of changes, you'll find that running `gulp watch` will really help you out!
-
-### Contributing as a developer
-
-Built using [Laravel](https://laravel.com), Cachet is very easy to jump into. Have a look around you'll find it surprisingly easy!
-
-These extra dependencies are required to develop Cachet:
-
-- Node.js
-- Gulp
-- Git
-
-Once cloned to your local machine, you'll need some demo data! Simply run `php artisan cachet:seed` to get the demo installation on the go.
+- A supported database: MySQL, PostgreSQL or SQLite
 
 ## Installation, Upgrades and Documentation
 
-You can now find our documentation at [https://docs.cachethq.io](https://docs.cachethq.io).
+You can find documentation at [https://docs.cachethq.io](https://docs.cachethq.io).
+
+Here are some useful quick links:
 
 - [Installing Cachet](https://docs.cachethq.io/docs/installing-cachet)
 - [Getting started with Docker](https://docs.cachethq.io/docs/get-started-with-docker)
-- [Getting started with Vagrant](https://docs.cachethq.io/docs/get-started-with-vagrant)
+- [Installing Cachet on Windows](https://docs.cachethq.io/docs/installing-cachet-on-windows)
 
-### Demo Account
+### Demo
 
-To test out the demo, you may login to the [Dashboard](https://demo.cachethq.io/dashboard) with the following:
+To test out the demo, you can log in to the [Dashboard](https://dev.cachethq.io/dashboard) with the following credentials:
 
-- **Username:** test or test@test.com
-- **Password:** test123
+- **Username:** `test` or `test@example.com`
+- **Password:** `test123`
 
-The demo is reset every half hour.
+> The demo resets every 30 minutes.
 
-### Release Notes
+## Translate Cachet
 
-All releases are listed on the [Releases page](https://github.com/CachetHQ/Cachet/releases) of the [Cachet GitHub repository](https://github.com/CachetHQ/Cachet). On the Releases page, you can also find the release notes for each release.
-
-## Translations
-
-A special thank you to our [translators](https://crowdin.com/project/cachet/activity_stream), who have allowed us to share Cachet with the world. If you'd like to contribute translations, please check out our [CrowdIn project](https://crowdin.com/project/cachet).
+If you'd like to contribute translations, please check out our [Crowdin project](https://crowdin.com/project/cachet).
 
 ## Security Vulnerabilities
 
-If you discover a security vulnerability within Cachet, please send an e-mail to us at support@alt-three.com. All security vulnerabilities will be promptly addressed.
+If you discover a security vulnerability within Cachet, please send an e-mail to [support@cachethq.io](mailto:support@cachethq.io?Cachet%20Security%20Vulnerability). All security vulnerabilities are reviewed on a case-by-case basis.
 
-## Installations
+## Limited Support Contact
 
-We offer a paid installation service, which starts at $99 but is subject to change, dependant on your setup and infrastructure.
+We may be able to resolve **support queries** via email. Please send an email to [support@cachethq.io](mailto:support@cachethq.io?Cachet%20Support). Please check the GitHub [issue tracker](https://github.com/CachetHQ/Cachet/issues) first before emailing.
 
-To find out more, email us at support@alt-three.com
+## Professional Installation Service
+
+A professional **installation service** is offered by Alt Three Services Limited. To find out more, contact [support@alt-three.com](mailto:support@alt-three.com?Cachet%20Installation). **Do not contact this email address for general support.**
+
+## Sponsorship
+
+You can sponsor Cachet at our [Patreon page](https://patreon.com/jbrooksuk).
+
+## Contributors
+
+### Code Contributors
+
+This project exists thanks to all the people who contribute. [[Contribute](CONTRIBUTING.md)].
+<a href="https://github.com/CachetHQ/Cachet/graphs/contributors"><img src="https://opencollective.com/Cachet/contributors.svg?width=890&button=false" /></a>
+
+### Financial Contributors
+
+Become a financial contributor and help us sustain our community. [[Contribute](https://opencollective.com/Cachet/contribute)]
+
+#### Individuals
+
+<a href="https://opencollective.com/Cachet"><img src="https://opencollective.com/Cachet/individuals.svg?width=890"></a>
+
+#### Organizations
+
+Support this project with your organization. Your logo will show up here with a link to your website. [[Contribute](https://opencollective.com/Cachet/contribute)]
+
+<a href="https://opencollective.com/Cachet/organization/0/website"><img src="https://opencollective.com/Cachet/organization/0/avatar.svg"></a>
+<a href="https://opencollective.com/Cachet/organization/1/website"><img src="https://opencollective.com/Cachet/organization/1/avatar.svg"></a>
+<a href="https://opencollective.com/Cachet/organization/2/website"><img src="https://opencollective.com/Cachet/organization/2/avatar.svg"></a>
+<a href="https://opencollective.com/Cachet/organization/3/website"><img src="https://opencollective.com/Cachet/organization/3/avatar.svg"></a>
+<a href="https://opencollective.com/Cachet/organization/4/website"><img src="https://opencollective.com/Cachet/organization/4/avatar.svg"></a>
+<a href="https://opencollective.com/Cachet/organization/5/website"><img src="https://opencollective.com/Cachet/organization/5/avatar.svg"></a>
+<a href="https://opencollective.com/Cachet/organization/6/website"><img src="https://opencollective.com/Cachet/organization/6/avatar.svg"></a>
+<a href="https://opencollective.com/Cachet/organization/7/website"><img src="https://opencollective.com/Cachet/organization/7/avatar.svg"></a>
+<a href="https://opencollective.com/Cachet/organization/8/website"><img src="https://opencollective.com/Cachet/organization/8/avatar.svg"></a>
+<a href="https://opencollective.com/Cachet/organization/9/website"><img src="https://opencollective.com/Cachet/organization/9/avatar.svg"></a>

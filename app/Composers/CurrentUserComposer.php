@@ -13,7 +13,15 @@ namespace CachetHQ\Cachet\Composers;
 
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
+use McCool\LaravelAutoPresenter\Facades\AutoPresenter;
 
+/**
+ * This is the current user composer class.
+ *
+ * @author Joseph Cohen <joe@alt-three.com>
+ * @author James Brooks <james@alt-three.com>
+ * @author Graham Campbell <graham@alt-three.com>
+ */
 class CurrentUserComposer
 {
     /**
@@ -25,6 +33,6 @@ class CurrentUserComposer
      */
     public function compose(View $view)
     {
-        $view->withCurrentUser(Auth::user());
+        $view->withCurrentUser(AutoPresenter::decorate(Auth::user()));
     }
 }

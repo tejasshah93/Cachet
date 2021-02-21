@@ -12,13 +12,25 @@
 namespace CachetHQ\Cachet\Models;
 
 use AltThree\Validator\ValidatingTrait;
+use CachetHQ\Cachet\Models\Traits\HasMeta;
 use CachetHQ\Cachet\Presenters\SubscriberPresenter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Str;
 use McCool\LaravelAutoPresenter\HasPresenter;
 
+/**
+ * This is the subscriber model.
+ *
+ * @author Joseph Cohen <joe@alt-three.com>
+ * @author James Brooks <james@alt-three.com>
+ * @author Graham Campbell <graham@alt-three.com>
+ */
 class Subscriber extends Model implements HasPresenter
 {
+    use HasMeta;
+    use Notifiable;
     use ValidatingTrait;
 
     /**
@@ -27,10 +39,12 @@ class Subscriber extends Model implements HasPresenter
      * @var string[]
      */
     protected $casts = [
-        'email'       => 'string',
-        'verify_code' => 'string',
-        'verified_at' => 'date',
-        'global'      => 'bool',
+        'email'             => 'string',
+        'phone_number'      => 'string',
+        'slack_webhook_url' => 'string',
+        'verify_code'       => 'string',
+        'verified_at'       => 'date',
+        'global'            => 'bool',
     ];
 
     /**
@@ -38,7 +52,13 @@ class Subscriber extends Model implements HasPresenter
      *
      * @var string[]
      */
-    protected $fillable = ['email'];
+    protected $fillable = [
+        'email',
+        'phone_number',
+        'slack_webhook_url',
+        'verified_at',
+        'global',
+    ];
 
     /**
      * The validation rules.
@@ -46,7 +66,9 @@ class Subscriber extends Model implements HasPresenter
      * @var string[]
      */
     public $rules = [
-        'email' => 'required|email',
+        'email'             => 'nullable|email',
+        'phone_number'      => 'nullable|string',
+        'slack_webhook_url' => 'nullable|url',
     ];
 
     /**
@@ -58,6 +80,8 @@ class Subscriber extends Model implements HasPresenter
 
     /**
      * Overrides the models boot method.
+     *
+     * @return void
      */
     public static function boot()
     {
@@ -71,7 +95,7 @@ class Subscriber extends Model implements HasPresenter
     }
 
     /**
-     * A subscriber has many subscriptions.
+     * Get the subscriptions relation.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
@@ -101,7 +125,7 @@ class Subscriber extends Model implements HasPresenter
      */
     public function scopeIsGlobal(Builder $query)
     {
-        return $query->where('global', true);
+        return $query->where('global', '=', true);
     }
 
     /**
@@ -116,7 +140,7 @@ class Subscriber extends Model implements HasPresenter
     {
         return $query->select('subscribers.*')
             ->join('subscriptions', 'subscribers.id', '=', 'subscriptions.subscriber_id')
-            ->where('subscriptions.component_id', $component_id);
+            ->where('subscriptions.component_id', '=', $component_id);
     }
 
     /**
@@ -136,7 +160,27 @@ class Subscriber extends Model implements HasPresenter
      */
     public static function generateVerifyCode()
     {
-        return str_random(42);
+        return Str::random(42);
+    }
+
+    /**
+     * Route notifications for the Nexmo channel.
+     *
+     * @return string
+     */
+    public function routeNotificationForNexmo()
+    {
+        return $this->phone_number;
+    }
+
+    /**
+     * Route notifications for the Slack channel.
+     *
+     * @return string
+     */
+    public function routeNotificationForSlack()
+    {
+        return $this->slack_webhook_url;
     }
 
     /**

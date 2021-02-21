@@ -45,7 +45,7 @@ return [
     'service' => [
         'good'  => '[0,1] System operational|[2,Inf] All systems are operational',
         'bad'   => '[0,1] The system is currently experiencing issues|[2,Inf] Some systems are experiencing issues',
-        'major' => '[0,1] The service experiencing a major outage|[2,Inf] Some systems are experiencing a major outage',
+        'major' => '[0,1] The service is experiencing a major outage|[2,Inf] Some systems are experiencing a major outage',
     ],
 
     'api' => [
@@ -103,8 +103,8 @@ return [
     'users' => [
         'email' => [
             'invite' => [
-                'text'           => ":app_name 팀의 상태페이지에 초대되었습니다. 가입하시려면 다음 링크를 눌러주세요.\n:link\n감사합니다, :app_name",
-                'html'           => '<p>:app_name 팀의 상태페이지에 초대되었습니다. 가입하시려면 다음 링크를 눌러주세요.</p>
+                'text' => ":app_name 팀의 상태페이지에 초대되었습니다. 가입하시려면 다음 링크를 눌러주세요.\n:link\n감사합니다, :app_name",
+                'html' => '<p>:app_name 팀의 상태페이지에 초대되었습니다. 가입하시려면 다음 링크를 눌러주세요.</p>
 <p><a href=":link">:link</a></p><p>감사합니다, :app_name</p>',
             ],
         ],

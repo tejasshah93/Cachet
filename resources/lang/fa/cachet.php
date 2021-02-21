@@ -45,7 +45,7 @@ return [
     'service' => [
         'good'  => '[0,1] System operational|[2,Inf] All systems are operational',
         'bad'   => '[0,1] The system is currently experiencing issues|[2,Inf] Some systems are experiencing issues',
-        'major' => '[0,1] The service experiencing a major outage|[2,Inf] Some systems are experiencing a major outage',
+        'major' => '[0,1] The service is experiencing a major outage|[2,Inf] Some systems are experiencing a major outage',
     ],
 
     'api' => [
@@ -92,8 +92,8 @@ return [
                 'subject' => '[New Incident] :status: :name',
             ],
             'component' => [
-                'subject'       => 'به‌روزرسانی وضعیت کامپوننت',
-                'text'          => 'کامپوننت :component یک تغییر وضعیت دارد. این کامپوننت هم‌اکنون در حالت :component_human_status قرار دارد.\n
+                'subject' => 'به‌روزرسانی وضعیت کامپوننت',
+                'text'    => 'کامپوننت :component یک تغییر وضعیت دارد. این کامپوننت هم‌اکنون در حالت :component_human_status قرار دارد.\n
 با تشکر، :app_name',
                 'html'          => '<p> کامپوننت با نام :component_name یک تغییر وضعیت دارد. کامپوننت هم‌اکنون در حالت :component_human_status قرار دارد. </p><p> با تشکر :app_name </p>',
                 'tooltip-title' => 'Subscribe to notifications for :component_name.',
@@ -104,8 +104,8 @@ return [
     'users' => [
         'email' => [
             'invite' => [
-                'text'           => "You have been invited to the team :app_name status page, to sign up follow the next link.\n:link\nThank you, :app_name",
-                'html'           => '<p>You have been invited to the team :app_name status page, to sign up follow the next link.</p><p><a href=":link">:link</a></p><p>Thank you, :app_name</p>',
+                'text' => "You have been invited to the team :app_name status page, to sign up follow the next link.\n:link\nThank you, :app_name",
+                'html' => '<p>You have been invited to the team :app_name status page, to sign up follow the next link.</p><p><a href=":link">:link</a></p><p>Thank you, :app_name</p>',
             ],
         ],
     ],

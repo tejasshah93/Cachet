@@ -11,38 +11,47 @@
 
 namespace CachetHQ\Cachet\Http\Middleware;
 
+use CachetHQ\Cachet\Settings\Repository as SettingsRepository;
 use Closure;
-use Illuminate\Config\Repository;
+use Illuminate\Contracts\Config\Repository as ConfigRepository;
 use Illuminate\Http\Request;
 use Jenssegers\Date\Date;
 
+/**
+ * This is the localize middleware class.
+ *
+ * @author James Brooks <james@alt-three.com>
+ * @author Joseph Cohen <joe@alt-three.com>
+ * @author Graham Campbell <graham@alt-three.com>
+ */
 class Localize
 {
     /**
-     * Array of languages Cachet can use.
-     *
-     * @var array
-     */
-    protected $langs;
-
-    /**
      * The config repository instance.
      *
-     * @var \Illuminate\Config\Repository
+     * @var \Illuminate\Contracts\Config\Repository
      */
     protected $config;
 
     /**
+     * The settings repository instance.
+     *
+     * @var \CachetHQ\Cachet\Settings\Repository
+     */
+    protected $settings;
+
+    /**
      * Constructs a new localize middleware instance.
      *
-     * @param \Illuminate\Config\Repository $config
+     * @param \Illuminate\Contracts\Config\Repository $config
+     * @param \CachetHQ\Cachet\Settings\Repository    $settings
      *
      * @return void
      */
-    public function __construct(Repository $config)
+    public function __construct(ConfigRepository $config, SettingsRepository $settings)
     {
         $this->config = $config;
-        $this->langs = $config->get('langs');
+        $this->settings = $settings;
     }
 
     /**
@@ -55,17 +64,18 @@ class Localize
      */
     public function handle(Request $request, Closure $next)
     {
-        if (!(bool) $this->config->get('setting.automatic_localization')) {
+        if (!(bool) $this->settings->get('automatic_localization')) {
             return $next($request);
         }
 
-        $supportedLanguages = $request->getLanguages();
+        $requestedLanguages = $request->getLanguages();
         $userLanguage = $this->config->get('app.locale');
+        $langs = $this->config->get('langs');
 
-        foreach ($supportedLanguages as $language) {
+        foreach ($requestedLanguages as $language) {
             $language = str_replace('_', '-', $language);
 
-            if (isset($this->langs[$language])) {
+            if (isset($langs[$language])) {
                 $userLanguage = $language;
                 break;
             }

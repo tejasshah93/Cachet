@@ -18,7 +18,6 @@ use CachetHQ\Cachet\Models\Invite;
 use CachetHQ\Cachet\Models\User;
 use GrahamCampbell\Binput\Facades\Binput;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\View;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -70,22 +69,22 @@ class SignupController extends Controller
         }
 
         try {
-            dispatch(new SignupUserCommand(
+            execute(new SignupUserCommand(
                 Binput::get('username'),
                 Binput::get('password'),
                 Binput::get('email'),
                 User::LEVEL_USER
             ));
         } catch (ValidationException $e) {
-            return Redirect::route('signup.invite', ['code' => $invite->code])
+            return cachet_redirect('signup.invite', [$invite->code])
                 ->withInput(Binput::except('password'))
                 ->withTitle(sprintf('%s %s', trans('dashboard.notifications.whoops'), trans('cachet.signup.failure')))
                 ->withErrors($e->getMessageBag());
         }
 
-        dispatch(new ClaimInviteCommand($invite));
+        execute(new ClaimInviteCommand($invite));
 
-        return Redirect::route('status-page')
+        return cachet_redirect('status-page')
             ->withSuccess(sprintf('<strong>%s</strong> %s', trans('dashboard.notifications.awesome'), trans('cachet.signup.success')));
     }
 }

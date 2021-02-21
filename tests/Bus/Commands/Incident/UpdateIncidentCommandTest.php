@@ -38,9 +38,10 @@ class UpdateIncidentCommandTest extends AbstractTestCase
             'component_id'     => 1,
             'component_status' => 1,
             'notify'           => false,
-            'incident_date'    => null,
+            'stickied'         => false,
+            'occurred_at'      => null,
             'template'         => null,
-            'template_vars'    => null,
+            'template_vars'    => [],
         ];
 
         $object = new UpdateIncidentCommand(
@@ -52,7 +53,8 @@ class UpdateIncidentCommandTest extends AbstractTestCase
             $params['component_id'],
             $params['component_status'],
             $params['notify'],
-            $params['incident_date'],
+            $params['stickied'],
+            $params['occurred_at'],
             $params['template'],
             $params['template_vars']
         );

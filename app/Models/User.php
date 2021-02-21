@@ -22,7 +22,9 @@ use Illuminate\Support\Facades\Hash;
 
 class User extends Model implements AuthenticatableContract, CanResetPasswordContract
 {
-    use Authenticatable, CanResetPassword, ValidatingTrait;
+    use Authenticatable;
+    use CanResetPassword;
+    use ValidatingTrait;
 
     /**
      * The admin level of user.
@@ -116,7 +118,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      */
     public function getGravatarAttribute($size = 200)
     {
-        return sprintf('https://www.gravatar.com/avatar/%s?size=%d', md5($this->email), $size);
+        return sprintf('https://www.gravatar.com/avatar/%s?size=%d', md5(strtolower($this->email)), $size);
     }
 
     /**

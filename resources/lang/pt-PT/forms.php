@@ -23,6 +23,11 @@ return [
         'enable_google2fa' => 'Habilitar a autenticação de dois fatores do Google',
         'cache_driver'     => 'Driver de Cache',
         'session_driver'   => 'Driver de Sessão',
+        'mail_driver'      => 'Mail Driver',
+        'mail_host'        => 'Mail Host',
+        'mail_address'     => 'Mail From Address',
+        'mail_username'    => 'Mail Username',
+        'mail_password'    => 'Mail Password',
     ],
 
     // Login form fields
@@ -44,8 +49,8 @@ return [
         'component'          => 'Componente',
         'message'            => 'Mensagem',
         'message-help'       => 'Você também pode usar o Markdown.',
-        'scheduled_at'       => 'Para quando pretende agendar a manutenção?',
-        'incident_time'      => 'Quando é que este incidente ocorreu?',
+        'scheduled_at'       => 'When to schedule the maintenance for?',
+        'incident_time'      => 'When did this incident occur?',
         'notify_subscribers' => 'Notificar subscritores?',
         'visibility'         => 'Incident Visibility',
         'public'             => 'Visível ao Publico',
@@ -118,10 +123,10 @@ return [
             'analytics_piwik_siteid' => 'ID do site Piwik',
         ],
         'localization' => [
-            'site-timezone'          => 'Fuso horário do site',
-            'site-locale'            => 'Idioma do site',
-            'date-format'            => 'Formato da Data',
-            'incident-date-format'   => 'Formato da Hora do Incidente',
+            'site-timezone'        => 'Fuso horário do site',
+            'site-locale'          => 'Idioma do site',
+            'date-format'          => 'Formato da Data',
+            'incident-date-format' => 'Formato da Hora do Incidente',
         ],
         'security' => [
             'allowed-domains'      => 'Domínios permitidos',

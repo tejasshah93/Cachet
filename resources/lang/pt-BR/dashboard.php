@@ -110,7 +110,7 @@ return [
             'edit' => [
                 'title'   => 'Editar um grupo de componentes',
                 'success' => 'Grupo de componentes atualizado.',
-                'failure' => 'Algo deu errado com o grupo de componentes, por favor tente novamente.',
+                'failure' => 'Algo deu errado com o componente, por favor tente novamente.',
             ],
             'delete' => [
                 'success' => 'O grupo de componentes foi excluído!',
@@ -224,7 +224,7 @@ return [
             'contributors'  => 'Colaboradores',
             'license'       => 'Cachet é um projeto de código aberto com licença BSD-3, lançado pela <a href="https://alt-three.com/?utm_source=cachet&utm_medium=credits&utm_campaign=Cachet%20Credit%20Dashboard" target="_blank"> Alt Three Services Limited</a>.',
             'backers-title' => 'Apoiadores e Patrocinadores',
-            'backers'       => 'Se você deseja apoiar o desenvolvimento, confira a campanha do <a href="https://patreon.com/jbrooksuk" target="_blank">Cachet no Pantreon</a>.',
+            'backers'       => 'Se você gostaria de apoiar o desenvolvimento futuro, confira o CrowdIn e GitHub.',
             'thank-you'     => 'Agradeço a cada um dos :count colaboradores.',
         ],
     ],
@@ -251,8 +251,6 @@ return [
 
     // Widgets
     'widgets' => [
-        'support'          => 'Ajude o Cachet',
-        'support_subtitle' => 'Confira nossa campanha no <strong><a href="https://patreon.com/jbrooksuk" target="_blank">Patreon</a></strong>!',
         'news'             => 'Últimas Notícias',
         'news_subtitle'    => 'Receba as últimas atualizações',
     ],
@@ -260,7 +258,7 @@ return [
     // Welcome modal
     'welcome' => [
         'welcome' => 'Bem-vindo à sua nova página de status!',
-        'message' => 'Sua página de status está quase pronta! Tavez vocë queira checar essas configurações extras',
+        'message' => 'Sua página de status está quase pronta! Talvez você queira checar essas configurações extras',
         'close'   => 'Me leve direto para o meu painel de controle',
         'steps'   => [
             'component'  => 'Criar componentes',

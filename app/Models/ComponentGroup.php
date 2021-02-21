@@ -20,7 +20,9 @@ use McCool\LaravelAutoPresenter\HasPresenter;
 
 class ComponentGroup extends Model implements HasPresenter
 {
-    use SearchableTrait, SortableTrait, ValidatingTrait;
+    use SearchableTrait;
+    use SortableTrait;
+    use ValidatingTrait;
 
     /**
      * The model's attributes.
@@ -99,7 +101,7 @@ class ComponentGroup extends Model implements HasPresenter
      */
     public function components()
     {
-        return $this->hasMany(Component::class, 'group_id', 'id')->orderBy('order');
+        return $this->hasMany(Component::class, 'group_id', 'id');
     }
 
     /**
@@ -119,7 +121,7 @@ class ComponentGroup extends Model implements HasPresenter
      */
     public function enabled_components()
     {
-        return $this->components()->enabled();
+        return $this->components()->enabled()->orderBy('order');
     }
 
     /**

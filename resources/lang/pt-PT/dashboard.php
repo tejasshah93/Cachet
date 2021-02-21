@@ -15,7 +15,7 @@ return [
 
     // Incidents
     'incidents' => [
-        'title'                    => 'Incidentes &amp; Agendamentos',
+        'title'                    => 'Incidents &amp; Schedule',
         'incidents'                => 'Ocorrências',
         'logged'                   => '{0} Não existem incidentes, bom trabalho.|Você registrou um incidente.|Você reportou <strong>:count</strong> incidentes.',
         'incident-create-template' => 'Criar template',
@@ -86,12 +86,12 @@ return [
             'title'   => 'Adicionar um Componente',
             'message' => 'Você deve adicionar um componente.',
             'success' => 'Component created.',
-            'failure' => 'Something went wrong with the component, please try again.',
+            'failure' => 'Something went wrong with the component group, please try again.',
         ],
         'edit' => [
             'title'   => 'Editar um Componente',
             'success' => 'Component updated.',
-            'failure' => 'Something went wrong with the component, please try again.',
+            'failure' => 'Something went wrong with the component group, please try again.',
         ],
         'delete' => [
             'success' => 'O componente foi apagado!',
@@ -164,7 +164,7 @@ return [
         'team'        => 'Equipe',
         'member'      => 'Membro',
         'profile'     => 'Perfil	',
-        'description' => 'Membros da equipe serão capazes de adicionar, modificar &amp; editar componentes e incidentes.',
+        'description' => 'Team Members will be able to add, modify &amp; edit components and incidents.',
         'add'         => [
             'title'   => 'Adicionar um novo membro de equipa',
             'success' => 'Team member added.',
@@ -224,7 +224,7 @@ return [
             'contributors'  => 'Contributors',
             'license'       => 'Cachet is a BSD-3-licensed open source project, released by <a href="https://alt-three.com/?utm_source=cachet&utm_medium=credits&utm_campaign=Cachet%20Credit%20Dashboard" target="_blank">Alt Three Services Limited</a>.',
             'backers-title' => 'Backers & Sponsors',
-            'backers'       => 'If you\'d like to support future development, check out the <a href="https://patreon.com/jbrooksuk" target="_blank">Cachet Patreon</a> campaign.',
+            'backers'       => 'If you\'d like to support future development, check out the CrowdIn and GitHub.',
             'thank-you'     => 'Thank you to each and every one of the :count contributors.',
         ],
     ],
@@ -233,7 +233,7 @@ return [
     'login' => [
         'login'      => 'Entrar',
         'logged_in'  => 'Você está logado.',
-        'welcome'    => 'Bem-vindo de volta!',
+        'welcome'    => 'Welcome Back!',
         'two-factor' => 'Por favor insira o seu token.',
     ],
 
@@ -251,24 +251,22 @@ return [
 
     // Widgets
     'widgets' => [
-        'support'          => 'Support Cachet',
-        'support_subtitle' => 'Check out our <strong><a href="https://patreon.com/jbrooksuk" target="_blank">Patreon</a></strong> page!',
         'news'             => 'Latest News',
-        'news_subtitle'    => 'Get the latest updates',
+        'news_subtitle'    => 'Get the latest update',
     ],
 
     // Welcome modal
     'welcome' => [
-        'welcome' => 'Bem vindo à sua página de estado!',
-        'message' => 'Sua página de status está quase pronta! Tavez vocë queira checar essas configurações extras',
+        'welcome' => 'Welcome to your new Status page!',
+        'message' => 'Your status page is almost ready! You might want to configure these extra settings',
         'close'   => 'Take me straight to my dashboard',
         'steps'   => [
-            'component'  => 'Criar componentes',
-            'incident'   => 'Criar incidentes',
-            'customize'  => 'Personalizar',
-            'team'       => 'Adicionar usuários',
-            'api'        => 'Gerar token de API',
-            'two-factor' => 'Autenticação de 2 Factores',
+            'component'  => 'Create components',
+            'incident'   => 'Create incidents',
+            'customize'  => 'Customize',
+            'team'       => 'Add users',
+            'api'        => 'Generate API token',
+            'two-factor' => 'Two Factor Authentication',
         ],
     ],
 

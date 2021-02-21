@@ -27,13 +27,13 @@ return [
     // Incidents
     'incidents' => [
         'none'          => 'No incidents reported',
-        'past'          => '過去的事件',
-        'previous_week' => '上一週',
-        'next_week'     => '下一週',
+        'past'          => 'Past Incidents',
+        'previous_week' => 'Previous Week',
+        'next_week'     => 'Next Week',
         'scheduled'     => '排程維護',
         'scheduled_at'  => '，於:timestamp',
         'status'        => [
-            0 => '排程中的維護', // TODO: Hopefully remove this.
+            0 => 'Scheduled', // TODO: Hopefully remove this.
             1 => '調查中',
             2 => '已辨明',
             3 => '警戒中',
@@ -57,28 +57,28 @@ return [
     'metrics' => [
         'filter' => [
             'last_hour' => 'Last Hour',
-            'hourly'    => '最近12小時',
-            'weekly'    => '週',
-            'monthly'   => '月',
+            'hourly'    => 'Last 12 Hours',
+            'weekly'    => 'Week',
+            'monthly'   => 'Month',
         ],
     ],
 
     // Subscriber
     'subscriber' => [
-        'subscribe' => '訂閱最新的狀態更新。',
-        'button'    => '訂閱',
+        'subscribe' => 'Subscribe to get the most recent updates',
+        'button'    => 'Subscribe',
         'manage'    => [
             'no_subscriptions' => 'You\'re currently subscribed to all updates.',
             'my_subscriptions' => 'You\'re currently subscribed to the following updates.',
         ],
         'email' => [
-            'subscribe'          => '訂閱 電子郵件 系統狀態更新。',
-            'subscribed'         => '您已經訂閱電子郵件通知，請檢查您的電子郵件，確認您的訂閱。',
-            'verified'           => '您的電子郵件訂閱已確認。謝謝！',
+            'subscribe'          => 'Subscribe to email updates.',
+            'subscribed'         => 'You\'ve been subscribed to email notifications, please check your email to confirm your subscription.',
+            'verified'           => 'Your email subscription has been confirmed. Thank you!',
             'manage'             => 'Manage your subscription',
-            'unsubscribe'        => '取消電子郵件訂閱。',
-            'unsubscribed'       => '您的電子郵件訂閱已取消。',
-            'failure'            => '郵件訂閱失敗。',
+            'unsubscribe'        => 'Unsubscribe from email updates.',
+            'unsubscribed'       => 'Your email subscription has been cancelled.',
+            'failure'            => 'Something went wrong with the subscription.',
             'already-subscribed' => 'Cannot subscribe :email because they\'re already subscribed.',
             'verify'             => [
                 'text'   => "Please confirm your email subscription to :app_name status updates.\n:link",
@@ -103,19 +103,19 @@ return [
     'users' => [
         'email' => [
             'invite' => [
-                'text'           => "您已被邀請加入 :app_name 團隊的狀態頁, 請點擊以下鏈接進行註冊。\n:link\n謝謝, :app_name",
-                'html'           => '<p>您已被邀請加入 :app_name 團隊的狀態頁, 請點擊以下鏈接進行註冊。</p><p><a href=":link">:link</a></p><p>謝謝, :app_name</p>',
+                'text' => "You have been invited to the team :app_name status page, to sign up follow the next link.\n:link\nThank you, :app_name",
+                'html' => '<p>You have been invited to the team :app_name status page, to sign up follow the next link.</p><p><a href=":link">:link</a></p><p>Thank you, :app_name</p>',
             ],
         ],
     ],
 
     'signup' => [
-        'title'    => '註冊',
+        'title'    => 'Sign Up',
         'username' => '用戶名',
         'email'    => '電郵地址',
         'password' => '密碼',
-        'success'  => '您的賬號已註冊成功。',
-        'failure'  => '註冊失敗。',
+        'success'  => 'Your account has been created.',
+        'failure'  => 'Something went wrong with the signup.',
     ],
 
     'system' => [
@@ -128,7 +128,7 @@ return [
         'subscribe' => [
             'title'  => 'Subscribe to component updates',
             'body'   => 'Enter your email address to subscribe to updates for this component. If you\'re already subscribed, you\'ll already receive emails for this component.',
-            'button' => '訂閱',
+            'button' => 'Subscribe',
         ],
     ],
 
@@ -136,9 +136,9 @@ return [
     'home'            => 'Home',
     'description'     => 'Stay up to date with the latest service updates from :app.',
     'powered_by'      => 'Powered by <a href="https://cachethq.io" class="links">Cachet</a>.',
-    'about_this_site' => '關於此站點',
-    'rss-feed'        => 'RSS 訂閱',
-    'atom-feed'       => 'Atom 訂閱',
+    'about_this_site' => 'About This Site',
+    'rss-feed'        => 'RSS',
+    'atom-feed'       => 'Atom',
     'feed'            => 'Status 訂閱',
 
 ];
